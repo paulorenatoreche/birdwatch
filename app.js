@@ -18,14 +18,13 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
-let map, cropper, currentCroppedDataUrl, currentLat, currentLng;
+let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
 
-// UI Elements
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
 const mainApp = document.getElementById('main-app');
+const contextMenu = document.getElementById('map-context-menu');
 
-// Auth
 document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
 document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 document.getElementById('logout-pending-btn').addEventListener('click', () => signOut(auth));
@@ -55,6 +54,11 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
+// Toggle Menu Lateral
+document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+});
+
 function iniciarMapa() {
     map = L.map('map').setView([-14.235, -51.925], 4);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -64,74 +68,73 @@ function iniciarMapa() {
         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
     });
 
-    // Carregar aves existentes no mapa
     carregarAvesNoMapa(greenIcon);
 
-    const modal = document.getElementById('add-bird-modal');
-
-    map.on('click', (e) => {
-        currentLat = e.latlng.lat;
-        currentLng = e.latlng.lng;
+    // Lógica do Botão Direito (Context Menu)
+    let contextLat, contextLng;
+    map.on('contextmenu', (e) => {
+        contextLat = e.latlng.lat;
+        contextLng = e.latlng.lng;
         
-        // Reverse Geocoding para pegar cidade/país
+        contextMenu.style.left = e.containerPoint.x + 'px';
+        contextMenu.style.top = e.containerPoint.y + 'px';
+        contextMenu.classList.remove('hidden');
+    });
+
+    // Fechar menu ao clicar normalmente no mapa
+    map.on('click', () => contextMenu.classList.add('hidden'));
+
+    // Adicionar Registro via Botão Direito
+    document.getElementById('add-record-btn').addEventListener('click', () => {
+        contextMenu.classList.add('hidden');
+        currentLat = contextLat;
+        currentLng = contextLng;
+        
+        document.getElementById('bird-location').value = "Loading location...";
+        
         fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLng}&format=json`)
             .then(res => res.json())
             .then(data => {
                 const locName = data.address.city || data.address.town || data.address.state || data.address.country || "Unknown Location";
-                const country = data.address.country || "World";
-                document.getElementById('bird-location').value = locName;
-                
-                // Gamification update
-                const fakeTotal = country === "Brazil" ? 1919 : 10000; 
-                document.getElementById('gami-region').innerText = `Progress in ${country}`;
-                document.getElementById('gami-text').innerText = `Total mapped based on regional DB.`;
+                currentCountry = data.address.country || "Unknown Country";
+                document.getElementById('bird-location').value = `${locName}, ${currentCountry}`;
             });
 
-        modal.classList.remove('hidden');
+        document.getElementById('add-bird-modal').classList.remove('hidden');
     });
 
-    // Fechar modais
-    document.getElementById('close-modal-btn').addEventListener('click', () => resetAndCloseDataModal());
-    document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
-    document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
-
-    // Botões do Menu Lateral
+    // Menus
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
+    document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
 
-    // Lógica de Foto (EXIF e Crop)
+    // Fechar Modais
+    document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
+    document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
+    document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
+    document.getElementById('close-achievements-btn').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
+
+    // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        
-        if (file.size > 10 * 1024 * 1024) {
-            alert("File is larger than 10MB!");
-            return;
-        }
+        if (file.size > 10 * 1024 * 1024) return alert("File is larger than 10MB!");
 
-        // Tenta ler EXIF para Data/Hora
         exifr.parse(file).then(exif => {
-            if (exif && exif.DateTimeOriginal) {
-                document.getElementById('bird-date').value = exif.DateTimeOriginal.toLocaleString();
-            }
-        }).catch(err => console.log("No EXIF data found."));
+            if (exif && exif.DateTimeOriginal) document.getElementById('bird-date').value = exif.DateTimeOriginal.toLocaleString();
+        }).catch(() => console.log("No EXIF data found."));
 
-        // Abre Crop Modal
         const reader = new FileReader();
         reader.onload = (event) => {
             document.getElementById('image-to-crop').src = event.target.result;
             document.getElementById('crop-modal').classList.remove('hidden');
             
             if (cropper) cropper.destroy();
-            cropper = new Cropper(document.getElementById('image-to-crop'), {
-                aspectRatio: 1, // Quadrado
-                viewMode: 2
-            });
+            cropper = new Cropper(document.getElementById('image-to-crop'), { aspectRatio: 1, viewMode: 2 });
         };
         reader.readAsDataURL(file);
     });
 
-    // Confirmar Crop
     document.getElementById('confirm-crop-btn').addEventListener('click', () => {
         currentCroppedDataUrl = cropper.getCroppedCanvas({ width: 800, height: 800 }).toDataURL('image/jpeg', 0.8);
         document.getElementById('cropped-preview').src = currentCroppedDataUrl;
@@ -139,7 +142,7 @@ function iniciarMapa() {
         document.getElementById('crop-modal').classList.add('hidden');
     });
 
-    // Salvar no Banco de Dados
+    // Salvar no BD
     document.getElementById('save-bird-btn').addEventListener('click', async () => {
         const btn = document.getElementById('save-bird-btn');
         btn.innerText = "Saving...";
@@ -158,6 +161,7 @@ function iniciarMapa() {
                 lat: currentLat,
                 lng: currentLng,
                 location: document.getElementById('bird-location').value,
+                country: currentCountry || "Unknown",
                 date: document.getElementById('bird-date').value,
                 equipment: document.getElementById('bird-equip').value,
                 informalName: document.getElementById('bird-informal-name').value,
@@ -198,18 +202,14 @@ function resetAndCloseDataModal() {
 
 async function carregarAvesNoMapa(icon) {
     const querySnapshot = await getDocs(collection(db, "birds"));
-    let count = 0;
     querySnapshot.forEach((doc) => {
         const data = doc.data();
         if (data.userId === auth.currentUser.uid) {
-            count++;
             L.marker([data.lat, data.lng], {icon: icon})
               .addTo(map)
               .bindPopup(`<b>${data.informalName || 'Bird'}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`);
         }
     });
-    // Atualiza gamificação inicial
-    document.getElementById('gami-bar').style.width = `${Math.min((count / 1000) * 100, 100)}%`;
 }
 
 async function abrirModalEspecies() {
@@ -234,4 +234,44 @@ async function abrirModalEspecies() {
         }
     });
     if (list.innerHTML === "") list.innerHTML = "<p>No species found yet. Start exploring!</p>";
+}
+
+async function abrirModalConquistas() {
+    const list = document.getElementById('achievements-list');
+    list.innerHTML = "Loading...";
+    document.getElementById('achievements-modal').classList.remove('hidden');
+
+    const querySnapshot = await getDocs(collection(db, "birds"));
+    const countryCounts = {};
+    
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.userId === auth.currentUser.uid && data.country) {
+            countryCounts[data.country] = (countryCounts[data.country] || 0) + 1;
+        }
+    });
+
+    list.innerHTML = "";
+    if (Object.keys(countryCounts).length === 0) {
+        list.innerHTML = "<p>No achievements yet. Add your first record!</p>";
+        return;
+    }
+
+    for (const [country, count] of Object.entries(countryCounts)) {
+        const progress = Math.min(count, 10);
+        const percentage = (progress / 10) * 100;
+        const status = progress >= 10 ? "✅ Completed" : `${progress}/10`;
+        
+        list.innerHTML += `
+            <div class="achievement-card">
+                <div class="achievement-header">
+                    <span>📍 ${country}</span>
+                    <span>${status}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${percentage}%;"></div>
+                </div>
+            </div>
+        `;
+    }
 }
