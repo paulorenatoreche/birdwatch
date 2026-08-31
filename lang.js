@@ -1,6 +1,5 @@
 window.translations = {
     en: {
-        // Welcome & Login
         welcome_title: "Welcome! 🐦‍⬛",
         welcome_text: "Hello there! Thank you for exploring and showing interest in <b>birdWatch</b>. This is a personal project lovingly crafted for my girlfriend to encourage our outdoor adventures, aiming to support one of her fondest hobbies: <b>birdwatching</b>. I genuinely hope this platform enriches your own birding experiences as well. If you have any suggestions, please feel free to drop me a message. <br> <br> <b>Happy birding!</b>",
         welcome_btn: "Got it!",
@@ -11,7 +10,6 @@ window.translations = {
         pending_desc: "Your account needs Admin approval to access the map.",
         logout_pending_btn: "Log out",
         
-        // Sidebar
         menu_species: "Found Species",
         menu_achievements: "Achievements",
         menu_db: "Global Database",
@@ -20,10 +18,8 @@ window.translations = {
         menu_logout: "Logout",
         footer_music: "Music by",
 
-        // Context Menu
         add_record_btn: "➕ Add a record",
 
-        // Modals - Record
         modal_record_title: "Record a Discovery",
         modal_edit_title: "Edit Discovery",
         photo_btn: "Select Photo (Max 10MB)",
@@ -36,29 +32,24 @@ window.translations = {
         btn_saving: "Saving...",
         btn_cancel: "Cancel",
 
-        // Modals - Crop
         modal_crop_title: "Adjust Photo",
         btn_confirm_crop: "Confirm Crop",
 
-        // Modals - Species
         modal_species_title: "My Discovered Species",
         btn_close: "Close",
         btn_edit: "✏️ Edit",
         btn_delete: "🗑️ Delete",
         
-        // Modals - Achievements
         modal_achievements_title: "My Achievements 🏆",
         achievements_desc: "Register 10 species to complete a country!",
         completed: "Completed",
 
-        // Modals - Profile
         modal_profile_title: "Your Explorer Stats",
         stat_total: "Total Birds",
         stat_countries: "Countries Explored",
         stat_conquered: "Conquered (10+)",
         chart_label: "Birds per Country",
 
-        // Dynamic JS Messages
         loading_loc: "Loading location...",
         loading: "Loading...",
         unknown_loc: "Unknown Location",
@@ -69,11 +60,12 @@ window.translations = {
         confirm_delete: "Are you sure you want to delete this discovery?",
         err_large_file: "File is larger than 10MB!",
         err_saving: "Error saving data.",
-        alert_blocked_audio: "Waiting for user interaction to play music."
+        alert_blocked_audio: "Waiting for user interaction to play music.",
+        gps_error: "Could not access GPS. Please check if your browser has Location permissions enabled in your device settings."
     },
     pt: {
         welcome_title: "Bem-vindo! 🐦‍⬛",
-        welcome_text: "Olá! Obrigado por explorar e demonstrar interesse no <b>birdWatch</b>. Este é um projeto pessoal feito com muito carinho para minha namorada, para incentivar nossas aventuras ao ar livre e apoiar um de seus hobbies favoritos: <b>birdwatching</b> (observação de aves). Espero sinceramente que este espaço enriqueça suas próprias experiências também. Se tiver sugestões, fique à vontade para me enviar uma mensagem. <br> <br> <b>Boas observações!</b>",
+        welcome_text: "Olá! Obrigado por explorar e demonstrar interesse no <b>birdWatch</b>. Este é um projeto pessoal feito com muito carinho para minha namorada, para incentivar nossas aventuras ao ar livre e apoiar um de seus hobbies favoritos: <b>birdwatching</b> (observação de aves). Espero sinceramente que esta plataforma enriqueça suas próprias experiências também. Se tiver sugestões, fique à vontade para me enviar uma mensagem. <br> <br> <b>Boas observações!</b>",
         welcome_btn: "Entendi!",
         login_title: "BirdWatch",
         login_desc: "Bem-vindo ao seu diário pessoal de aves.",
@@ -132,7 +124,8 @@ window.translations = {
         confirm_delete: "Tem certeza de que deseja deletar esta descoberta?",
         err_large_file: "O arquivo é maior que 10MB!",
         err_saving: "Erro ao salvar os dados.",
-        alert_blocked_audio: "Aguardando interação do usuário para tocar música."
+        alert_blocked_audio: "Aguardando interação do usuário para tocar música.",
+        gps_error: "Não foi possível acessar o GPS. Verifique nos Ajustes do celular se o seu navegador tem permissão de Localização."
     },
     es: {
         welcome_title: "¡Bienvenido! 🐦‍⬛",
@@ -195,6 +188,7 @@ window.translations = {
         confirm_delete: "¿Estás seguro de que deseas eliminar este descubrimiento?",
         err_large_file: "¡El archivo es mayor de 10MB!",
         err_saving: "Error al guardar los datos.",
-        alert_blocked_audio: "Esperando interacción del usuario para reproducir música."
+        alert_blocked_audio: "Esperando interacción del usuario para reproducir música.",
+        gps_error: "No se pudo acceder al GPS. Verifique en la configuración de su dispositivo si su navegador tiene permisos de Ubicación."
     }
 };
