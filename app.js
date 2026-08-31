@@ -286,3 +286,71 @@ async function abrirModalConquistas() {
         `;
     }
 }
+async function abrirModalPerfil() {
+    document.getElementById('profile-modal').classList.remove('hidden');
+    
+    // Preenche dados básicos do Google
+    const user = auth.currentUser;
+    document.getElementById('profile-name').innerText = user.displayName || 'Explorer';
+    document.getElementById('profile-email').innerText = user.email || '';
+
+    // Lê o banco de dados
+    const querySnapshot = await getDocs(collection(db, "birds"));
+    let totalBirds = 0;
+    const countryCounts = {};
+    
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.userId === user.uid) {
+            totalBirds++;
+            if (data.country) {
+                countryCounts[data.country] = (countryCounts[data.country] || 0) + 1;
+            }
+        }
+    });
+
+    // Cálculos Nerds
+    const totalCountries = Object.keys(countryCounts).length;
+    const conqueredCountries = Object.values(countryCounts).filter(count => count >= 10).length;
+
+    // Atualiza os Big Numbers na tela
+    document.getElementById('stat-total-birds').innerText = totalBirds;
+    document.getElementById('stat-total-countries').innerText = totalCountries;
+    document.getElementById('stat-conquered').innerText = conqueredCountries;
+
+    // Destrói o gráfico antigo se houver, para não sobrepor
+    if (profileChartInstance) {
+        profileChartInstance.destroy();
+    }
+
+    // Prepara dados do Gráfico: Top 5 Países com mais pássaros
+    const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const labels = sortedCountries.map(item => item[0]);
+    const data = sortedCountries.map(item => item[1]);
+
+    // Desenha o gráfico
+    const ctx = document.getElementById('profileChart').getContext('2d');
+    profileChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Birds per Country',
+                data: data,
+                backgroundColor: '#688a42',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1, color: '#5c4d42' } },
+                x: { ticks: { color: '#5c4d42', font: { family: 'Nunito' } } }
+            }
+        }
+    });
+}
