@@ -13,8 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     
-    <!-- Versionamento atualizado (?v=1.3) para forçar limpeza de cache -->
-    <link rel="stylesheet" href="style.css?v=1.3">
+    <link rel="stylesheet" href="style.css?v=1.4">
 </head>
 <body>
     <audio id="bg-music"></audio>
@@ -23,26 +22,24 @@
     <div id="welcome-modal" class="overlay-screen hidden">
         <div class="cozy-panel text-center" style="max-width: 500px; padding: 45px; position: relative;">
             <button id="close-x-welcome" class="close-x-btn">&times;</button>
-            <h2 class="cozy-title" style="border: none; margin-bottom: 10px;">Welcome! 🐦‍⬛</h2>
-            <p style="line-height: 1.6; text-align: justify; font-size: 1.05em;">
-                Hello there! Thank you for exploring and showing interest in <b>birdWatch</b>. This is a personal project lovingly crafted for my girlfriend to encourage our outdoor adventures, aiming to support one of her fondest hobbies: <b>birdwatching</b>. I genuinely hope this platform enriches your own birding experiences as well. If you have any suggestions, please feel free to drop me a message. <br> <br> <b>Happy birding!</b>
-            </p>
-            <button id="close-welcome-btn" class="cozy-btn mt-15" style="width: 100%;">Got it!</button>
+            <h2 class="cozy-title" data-i18n="welcome_title" style="border: none; margin-bottom: 10px;">Welcome! 🐦‍⬛</h2>
+            <p id="welcome-text-content" data-i18n="welcome_text" style="line-height: 1.6; text-align: justify; font-size: 1.05em;"></p>
+            <button id="close-welcome-btn" data-i18n="welcome_btn" class="cozy-btn mt-15" style="width: 100%;">Got it!</button>
         </div>
     </div>
 
     <div id="login-screen" class="overlay-screen">
         <div class="cozy-panel text-center">
-            <h1 class="cozy-title">BirdWatch</h1>
-            <p>Welcome to your personal bird journal.</p>
-            <button id="google-login-btn" class="cozy-btn mt-15">Log in with Google</button>
+            <h1 class="cozy-title" data-i18n="login_title">BirdWatch</h1>
+            <p data-i18n="login_desc">Welcome to your personal bird journal.</p>
+            <button id="google-login-btn" data-i18n="login_btn" class="cozy-btn mt-15">Log in with Google</button>
         </div>
     </div>
     <div id="pending-screen" class="overlay-screen hidden">
         <div class="cozy-panel text-center">
-            <h1 class="cozy-title">Awaiting Approval</h1>
-            <p>Your account needs Admin approval to access the map.</p>
-            <button id="logout-pending-btn" class="cozy-btn-secondary mt-15">Log out</button>
+            <h1 class="cozy-title" data-i18n="pending_title">Awaiting Approval</h1>
+            <p data-i18n="pending_desc">Your account needs Admin approval to access the map.</p>
+            <button id="logout-pending-btn" data-i18n="logout_pending_btn" class="cozy-btn-secondary mt-15">Log out</button>
         </div>
     </div>
 
@@ -53,13 +50,11 @@
                 <h1 class="cozy-title"><span class="nav-text">BirdWatch</span></h1>
                 <div class="header-actions">
                     <button id="toggle-music-btn" title="Toggle Music">
-                        <!-- Ícone de Tocando (Fica ativo como padrão) -->
                         <svg id="icon-music-on" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                             <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
                         </svg>
-                        <!-- Ícone de Mudo (Inicia escondido) -->
                         <svg id="icon-music-off" class="hidden" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                             <line x1="23" y1="1" x2="1" y2="23"></line>
@@ -74,23 +69,29 @@
             </div>
             <nav>
                 <ul>
-                    <li><button id="nav-species">🦉 <span class="nav-text">Found Species</span></button></li>
-                    <li><button id="nav-achievements">🏆 <span class="nav-text">Achievements</span></button></li>
-                    <li><button id="nav-db">📚 <span class="nav-text">Global Database</span></button></li>
-                    <li><button id="nav-profile">👤 <span class="nav-text">My Profile</span></button></li>
-                    <li><button id="nav-about">🐦‍⬛ <span class="nav-text">About it</span></button></li>
+                    <li><button id="nav-species">🦉 <span class="nav-text" data-i18n="menu_species">Found Species</span></button></li>
+                    <li><button id="nav-achievements">🏆 <span class="nav-text" data-i18n="menu_achievements">Achievements</span></button></li>
+                    <li><button id="nav-db">📚 <span class="nav-text" data-i18n="menu_db">Global Database</span></button></li>
+                    <li><button id="nav-profile">👤 <span class="nav-text" data-i18n="menu_profile">My Profile</span></button></li>
+                    <li><button id="nav-about">🐦 <span class="nav-text" data-i18n="menu_about">About it</span></button></li>
                 </ul>
             </nav>
-            <button id="logout-btn" class="cozy-btn-secondary mt-auto">🚪 <span class="nav-text">Logout</span></button>
+            <button id="logout-btn" class="cozy-btn-secondary mt-auto">🚪 <span class="nav-text" data-i18n="menu_logout">Logout</span></button>
+            
             <div class="sidebar-footer">
-                <span class="nav-text">Music by <a href="https://pixabay.com" target="_blank">Pixabay</a></span>
+                <span class="nav-text"><span data-i18n="footer_music">Music by</span> <a href="https://pixabay.com" target="_blank">Pixabay</a></span>
+                <div class="lang-selector">
+                    <button class="lang-btn" data-lang="en" title="English">🇺🇸</button>
+                    <button class="lang-btn" data-lang="pt" title="Português">🇧🇷</button>
+                    <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
+                </div>
             </div>
         </aside>
 
         <main class="map-area">
             <div id="map"></div>
             <div id="map-context-menu" class="hidden">
-                <button id="add-record-btn">➕ Add a record</button>
+                <button id="add-record-btn" data-i18n="add_record_btn">➕ Add a record</button>
             </div>
         </main>
     </div>
@@ -99,22 +100,22 @@
     <div id="add-bird-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel">
             <button id="close-x-add" class="close-x-btn">&times;</button>
-            <h2 id="modal-title-bird">Record a Discovery</h2>
+            <h2 id="modal-title-bird" data-i18n="modal_record_title">Record a Discovery</h2>
             <label class="custom-file-upload">
                 <input type="file" id="bird-photo-input" accept="image/*">
-                📷 Select Photo (Max 10MB)
+                📷 <span data-i18n="photo_btn">Select Photo (Max 10MB)</span>
             </label>
             <div id="cropped-preview-container" class="hidden">
                 <img id="cropped-preview" src="" alt="Cropped preview">
             </div>
-            <input type="text" id="bird-location" placeholder="Location (Auto-filled)">
-            <input type="text" id="bird-date" placeholder="Date & Time (Auto-extracted)">
-            <input type="text" id="bird-equip" placeholder="Equipment (e.g. Binoculars, Nikon)">
-            <input type="text" id="bird-informal-name" placeholder="Informal Name (e.g. Robin)">
-            <input type="text" id="bird-scientific-name" placeholder="Scientific Name">
+            <input type="text" id="bird-location" data-i18n-placeholder="ph_location" placeholder="Location (Auto-filled)">
+            <input type="text" id="bird-date" data-i18n-placeholder="ph_date" placeholder="Date & Time (Auto-extracted)">
+            <input type="text" id="bird-equip" data-i18n-placeholder="ph_equip" placeholder="Equipment (e.g. Binoculars, Nikon)">
+            <input type="text" id="bird-informal-name" data-i18n-placeholder="ph_informal" placeholder="Informal Name (e.g. Robin)">
+            <input type="text" id="bird-scientific-name" data-i18n-placeholder="ph_scientific" placeholder="Scientific Name">
             
-            <button id="save-bird-btn" class="cozy-btn">Save Discovery</button>
-            <button id="close-modal-btn" class="cozy-btn-secondary">Cancel</button>
+            <button id="save-bird-btn" data-i18n="btn_save" class="cozy-btn">Save Discovery</button>
+            <button id="close-modal-btn" data-i18n="btn_cancel" class="cozy-btn-secondary">Cancel</button>
         </div>
     </div>
 
@@ -122,12 +123,12 @@
     <div id="crop-modal" class="modal hidden">
         <div class="modal-content cozy-panel" style="width: 90vw; max-width: 600px;">
             <button id="close-x-crop" class="close-x-btn">&times;</button>
-            <h2>Adjust Photo</h2>
+            <h2 data-i18n="modal_crop_title">Adjust Photo</h2>
             <div class="cropper-container">
                 <img id="image-to-crop" src="">
             </div>
-            <button id="confirm-crop-btn" class="cozy-btn mt-15">Confirm Crop</button>
-            <button id="cancel-crop-btn" class="cozy-btn-secondary mt-15">Cancel</button>
+            <button id="confirm-crop-btn" data-i18n="btn_confirm_crop" class="cozy-btn mt-15">Confirm Crop</button>
+            <button id="cancel-crop-btn" data-i18n="btn_cancel" class="cozy-btn-secondary mt-15">Cancel</button>
         </div>
     </div>
 
@@ -135,9 +136,9 @@
     <div id="species-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel" style="width: 80vw; max-width: 800px;">
             <button id="close-x-species" class="close-x-btn">&times;</button>
-            <h2>My Discovered Species</h2>
+            <h2 data-i18n="modal_species_title">My Discovered Species</h2>
             <div id="species-list" class="species-grid"></div>
-            <button id="close-species-btn" class="cozy-btn-secondary mt-15">Close</button>
+            <button id="close-species-btn" data-i18n="btn_close" class="cozy-btn-secondary mt-15">Close</button>
         </div>
     </div>
 
@@ -145,10 +146,10 @@
     <div id="achievements-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel" style="width: 80vw; max-width: 600px;">
             <button id="close-x-achievements" class="close-x-btn">&times;</button>
-            <h2>My Achievements 🏆</h2>
-            <p>Register 10 species to complete a country!</p>
+            <h2 data-i18n="modal_achievements_title">My Achievements 🏆</h2>
+            <p data-i18n="achievements_desc">Register 10 species to complete a country!</p>
             <div id="achievements-list"></div>
-            <button id="close-achievements-btn" class="cozy-btn-secondary mt-15">Close</button>
+            <button id="close-achievements-btn" data-i18n="btn_close" class="cozy-btn-secondary mt-15">Close</button>
         </div>
     </div>
 
@@ -161,19 +162,19 @@
                 <p id="profile-email">email@example.com</p>
             </div>
             
-            <h3 class="mt-15 text-center">Your Explorer Stats</h3>
+            <h3 class="mt-15 text-center" data-i18n="modal_profile_title">Your Explorer Stats</h3>
             <div class="stats-grid mt-15">
                 <div class="stat-card">
                     <div class="stat-value" id="stat-total-birds">0</div>
-                    <div class="stat-label">Total Birds</div>
+                    <div class="stat-label" data-i18n="stat_total">Total Birds</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="stat-total-countries">0</div>
-                    <div class="stat-label">Countries Explored</div>
+                    <div class="stat-label" data-i18n="stat_countries">Countries Explored</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="stat-conquered">0</div>
-                    <div class="stat-label">Conquered (10+)</div>
+                    <div class="stat-label" data-i18n="stat_conquered">Conquered (10+)</div>
                 </div>
             </div>
 
@@ -181,7 +182,7 @@
                 <canvas id="profileChart"></canvas>
             </div>
 
-            <button id="close-profile-btn" class="cozy-btn-secondary mt-15">Close</button>
+            <button id="close-profile-btn" data-i18n="btn_close" class="cozy-btn-secondary mt-15">Close</button>
         </div>
     </div>
 
@@ -190,7 +191,8 @@
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Versionamento atualizado (?v=1.3) -->
-    <script type="module" src="app.js?v=1.3"></script>
+    <!-- ARQUIVOS DO PROJETO COM VERSÃO 1.4 -->
+    <script src="lang.js?v=1.4"></script>
+    <script type="module" src="app.js?v=1.4"></script>
 </body>
 </html>
