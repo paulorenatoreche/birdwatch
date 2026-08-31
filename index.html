@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Comandos para forçar a limpeza de Cache do navegador -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-expires="0">
@@ -15,17 +13,20 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     
-    <!-- Versionamento adicionado aqui (?v=1.0) -->
-    <link rel="stylesheet" href="style.css?v=1.0">
+    <!-- Versionamento atualizado (?v=1.2) -->
+    <link rel="stylesheet" href="style.css?v=1.2">
 </head>
 <body>
+    <!-- Player Invisível de Música (A lógica de passar de faixa está no app.js agora) -->
+    <audio id="bg-music"></audio>
+
     <!-- WELCOME MODAL -->
     <div id="welcome-modal" class="overlay-screen hidden">
         <div class="cozy-panel text-center" style="max-width: 500px; padding: 45px; position: relative;">
             <button id="close-x-welcome" class="close-x-btn">&times;</button>
-            <h2 class="cozy-title" style="border: none; margin-bottom: 10px;">Welcome! 🐦‍⬛</h2>
+            <h2 class="cozy-title" style="border: none; margin-bottom: 10px;">Welcome! 🌿</h2>
             <p style="line-height: 1.6; text-align: justify; font-size: 1.05em;">
-                Hello there! Thank you for exploring and showing interest in <b>birdWatch</b>. This is a personal project lovingly crafted for my girlfriend to encourage our outdoor adventures, aiming to support one of her fondest hobbies: <b>birdwatching</b>. I genuinely hope this platform enriches your own birding experiences as well. If you have any suggestions, please feel free to drop me a message. <br> <br> <b>Happy birding!</b>
+                Hello there! Thank you for exploring and showing interest in birdWatch. This is a personal project lovingly crafted for my girlfriend to chronicle our park strolls and outdoor adventures, aiming to support one of her fondest hobbies—birdwatching. I genuinely hope this platform enriches your own birding experiences as well. Should you have any suggestions, please feel free to drop me a message. Happy birding!
             </p>
             <button id="close-welcome-btn" class="cozy-btn mt-15" style="width: 100%;">Got it!</button>
         </div>
@@ -51,7 +52,24 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1 class="cozy-title"><span class="nav-text">BirdWatch</span></h1>
-                <button id="toggle-sidebar-btn" title="Toggle Menu">⏪</button>
+                <div class="header-actions">
+                    <button id="toggle-music-btn" title="Toggle Music">
+                        <svg id="icon-music-off" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="1" x2="1" y2="23"></line>
+                        </svg>
+                        <svg id="icon-music-on" class="hidden" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        </svg>
+                    </button>
+                    <button id="toggle-sidebar-btn" title="Toggle Menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
             </div>
             <nav>
                 <ul>
@@ -59,10 +77,13 @@
                     <li><button id="nav-achievements">🏆 <span class="nav-text">Achievements</span></button></li>
                     <li><button id="nav-db">📚 <span class="nav-text">Global Database</span></button></li>
                     <li><button id="nav-profile">👤 <span class="nav-text">My Profile</span></button></li>
-                    <li><button id="nav-about">🐦‍⬛ <span class="nav-text">About it</span></button></li>
+                    <li><button id="nav-about">🐦 <span class="nav-text">About it</span></button></li>
                 </ul>
             </nav>
             <button id="logout-btn" class="cozy-btn-secondary mt-auto">🚪 <span class="nav-text">Logout</span></button>
+            <div class="sidebar-footer">
+                <span class="nav-text">Music by <a href="https://pixabay.com" target="_blank">Pixabay</a></span>
+            </div>
         </aside>
 
         <main class="map-area">
@@ -168,7 +189,7 @@
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Versionamento adicionado aqui (?v=1.0) -->
-    <script type="module" src="app.js?v=1.0"></script>
+    <!-- Versionamento atualizado (?v=1.2) -->
+    <script type="module" src="app.js?v=1.2"></script>
 </body>
 </html>
