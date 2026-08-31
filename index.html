@@ -13,10 +13,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     
-    <!-- Biblioteca de Busca do Leaflet (Geocoder) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     
-    <link rel="stylesheet" href="style.css?v=1.6">
+    <link rel="stylesheet" href="style.css?v=1.7">
 </head>
 <body>
     <audio id="bg-music"></audio>
@@ -113,11 +112,7 @@
             </div>
             
             <input type="text" id="bird-location" data-i18n-placeholder="ph_location" placeholder="Location (Auto-filled)">
-            
-            <!-- Campo de data atualizado para calendário -->
             <input type="date" id="bird-date" data-i18n-placeholder="ph_date">
-            
-            <!-- Datalist para autocomplete dos equipamentos -->
             <input type="text" id="bird-equip" list="equip-list" data-i18n-placeholder="ph_equip" placeholder="Equipment (e.g. Binoculars, Nikon)">
             <datalist id="equip-list"></datalist>
 
@@ -197,13 +192,12 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Script de Busca do Leaflet -->
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <script src="lang.js?v=1.6"></script>
-    <script type="module" src="app.js?v=1.6"></script>
+    <script src="lang.js?v=1.7"></script>
+    <script type="module" src="app.js?v=1.7"></script>
 </body>
 </html>
