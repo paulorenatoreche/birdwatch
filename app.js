@@ -223,7 +223,6 @@ function iniciarMapa() {
     map = L.map('map', { zoomControl: false }).setView([-14.235, -51.925], 4);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-    // Controle de Zoom padrão reposicionado na esquerda superior
     L.control.zoom({ position: 'topleft' }).addTo(map);
 
     L.Control.geocoder({
