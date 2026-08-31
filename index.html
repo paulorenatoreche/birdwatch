@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BirdWatch Journal</title>
     
-    <!-- Fontes Cozy -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    
-    <!-- Mapa, Crop e CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- TELA DE LOGIN E PENDENTE -->
     <div id="login-screen" class="overlay-screen">
         <div class="cozy-panel text-center">
             <h1 class="cozy-title">BirdWatch</h1>
@@ -32,27 +28,29 @@
 
     <!-- APP PRINCIPAL -->
     <div class="app-container hidden" id="main-app">
-        <aside class="sidebar">
-            <h1 class="cozy-title">BirdWatch</h1>
+        <!-- Menu Lateral Retrátil -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="cozy-title"><span class="nav-text">BirdWatch</span></h1>
+                <button id="toggle-sidebar-btn" title="Toggle Menu">⏪</button>
+            </div>
             <nav>
                 <ul>
-                    <li><button id="nav-map">🌍 Main Map</button></li>
-                    <li><button id="nav-species">🦉 Found Species</button></li>
-                    <li><button id="nav-db">📚 Global Database</button></li>
+                    <li><button id="nav-map">🌍 <span class="nav-text">Main Map</span></button></li>
+                    <li><button id="nav-species">🦉 <span class="nav-text">Found Species</span></button></li>
+                    <li><button id="nav-achievements">🏆 <span class="nav-text">Achievements</span></button></li>
+                    <li><button id="nav-db">📚 <span class="nav-text">Global Database</span></button></li>
                 </ul>
             </nav>
-            
-            <div class="gamification-box">
-                <p id="gami-region" class="font-bold">Global Progress</p>
-                <div class="progress-bar"><div id="gami-bar" class="progress-fill" style="width: 0%;"></div></div>
-                <small id="gami-text">Click on a country to see your progress!</small>
-            </div>
-
-            <button id="logout-btn" class="cozy-btn-secondary mt-auto">Logout</button>
+            <button id="logout-btn" class="cozy-btn-secondary mt-auto">🚪 <span class="nav-text">Logout</span></button>
         </aside>
 
         <main class="map-area">
             <div id="map"></div>
+            <!-- Menu do Botão Direito -->
+            <div id="map-context-menu" class="hidden">
+                <button id="add-record-btn">➕ Add a record</button>
+            </div>
         </main>
     </div>
 
@@ -60,7 +58,6 @@
     <div id="add-bird-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel">
             <h2>Record a Discovery</h2>
-            
             <label class="custom-file-upload">
                 <input type="file" id="bird-photo-input" accept="image/*">
                 📷 Select Photo (Max 10MB)
@@ -68,12 +65,11 @@
             <div id="cropped-preview-container" class="hidden">
                 <img id="cropped-preview" src="" alt="Cropped preview">
             </div>
-
-            <input type="text" id="bird-location" placeholder="Location (Auto-filled on click)">
+            <input type="text" id="bird-location" placeholder="Location (Auto-filled)">
             <input type="text" id="bird-date" placeholder="Date & Time (Auto-extracted)">
             <input type="text" id="bird-equip" placeholder="Equipment (e.g. Binoculars, Nikon)">
             <input type="text" id="bird-informal-name" placeholder="Informal Name (e.g. Robin)">
-            <input type="text" id="bird-scientific-name" placeholder="Scientific Name (e.g. Erithacus rubecula)">
+            <input type="text" id="bird-scientific-name" placeholder="Scientific Name">
             
             <button id="save-bird-btn" class="cozy-btn">Save Discovery</button>
             <button id="close-modal-btn" class="cozy-btn-secondary">Cancel</button>
@@ -98,6 +94,16 @@
             <h2>My Discovered Species</h2>
             <div id="species-list" class="species-grid"></div>
             <button id="close-species-btn" class="cozy-btn-secondary mt-15">Close</button>
+        </div>
+    </div>
+
+    <!-- MODAL 4: ACHIEVEMENTS -->
+    <div id="achievements-modal" class="modal hidden">
+        <div class="modal-content cozy-panel scrollable-panel" style="width: 80vw; max-width: 600px;">
+            <h2>My Achievements 🏆</h2>
+            <p>Register 10 species to complete a country!</p>
+            <div id="achievements-list"></div>
+            <button id="close-achievements-btn" class="cozy-btn-secondary mt-15">Close</button>
         </div>
     </div>
 
