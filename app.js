@@ -59,7 +59,6 @@ document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('collapsed');
 });
 
-// FUNÇÃO CENTRAL DE REGISTRO
 function iniciarRegistro(lat, lng) {
     currentLat = lat;
     currentLng = lng;
@@ -87,16 +86,13 @@ function iniciarMapa() {
 
     carregarAvesNoMapa(greenIcon);
 
-    // DETECÇÃO DE CELULAR VS COMPUTADOR
     let contextLat, contextLng;
     
     if (L.Browser.mobile) {
-        // Se for celular, clique simples no mapa já abre o registro
         map.on('click', (e) => {
             iniciarRegistro(e.latlng.lat, e.latlng.lng);
         });
     } else {
-        // Se for computador, mantém o botão direito (contextmenu)
         map.on('contextmenu', (e) => {
             contextLat = e.latlng.lat;
             contextLng = e.latlng.lng;
@@ -118,11 +114,13 @@ function iniciarMapa() {
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
+    document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
+    
+    // Botões originais (cancel/close) no rodapé
     document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
     document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
     document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
     document.getElementById('close-achievements-btn').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
-    document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
     document.getElementById('close-profile-btn').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
     // Novos botões X do topo
@@ -297,12 +295,10 @@ async function abrirModalConquistas() {
 async function abrirModalPerfil() {
     document.getElementById('profile-modal').classList.remove('hidden');
     
-    // Preenche dados básicos do Google
     const user = auth.currentUser;
     document.getElementById('profile-name').innerText = user.displayName || 'Explorer';
     document.getElementById('profile-email').innerText = user.email || '';
 
-    // Lê o banco de dados
     const querySnapshot = await getDocs(collection(db, "birds"));
     let totalBirds = 0;
     const countryCounts = {};
@@ -317,26 +313,21 @@ async function abrirModalPerfil() {
         }
     });
 
-    // Cálculos Nerds
     const totalCountries = Object.keys(countryCounts).length;
     const conqueredCountries = Object.values(countryCounts).filter(count => count >= 10).length;
 
-    // Atualiza os Big Numbers na tela
     document.getElementById('stat-total-birds').innerText = totalBirds;
     document.getElementById('stat-total-countries').innerText = totalCountries;
     document.getElementById('stat-conquered').innerText = conqueredCountries;
 
-    // Destrói o gráfico antigo se houver, para não sobrepor
     if (profileChartInstance) {
         profileChartInstance.destroy();
     }
 
-    // Prepara dados do Gráfico: Top 5 Países com mais pássaros
     const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
     const labels = sortedCountries.map(item => item[0]);
     const data = sortedCountries.map(item => item[1]);
 
-    // Desenha o gráfico
     const ctx = document.getElementById('profileChart').getContext('2d');
     profileChartInstance = new Chart(ctx, {
         type: 'bar',
