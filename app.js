@@ -3,6 +3,54 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signO
 import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
+// ==========================================
+// LÓGICA DE IDIOMAS (I18N)
+// ==========================================
+window.currentLang = localStorage.getItem('birdwatch_lang') || 'en';
+
+function applyLanguage(lang) {
+    window.currentLang = lang;
+    localStorage.setItem('birdwatch_lang', lang);
+    
+    // Atualiza botões ativos no menu
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+
+    // Atualiza textos estáticos
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (window.translations[lang][key]) {
+            if(element.tagName === "P" && key === "welcome_text") {
+                element.innerHTML = window.translations[lang][key];
+            } else {
+                element.innerText = window.translations[lang][key];
+            }
+        }
+    });
+
+    // Atualiza placeholders de inputs
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-i18n-placeholder');
+        if (window.translations[lang][key]) {
+            element.placeholder = window.translations[lang][key];
+        }
+    });
+
+    // Atualiza título dinâmico se a janela estiver fechada
+    if (!editingBirdId) {
+        document.getElementById('modal-title-bird').innerText = window.translations[lang].modal_record_title;
+    }
+}
+
+// Configura os cliques nas bandeiras
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => applyLanguage(e.target.getAttribute('data-lang')));
+});
+// Aplica a linguagem salva no primeiro load
+applyLanguage(window.currentLang);
+// ==========================================
+
 const firebaseConfig = {
     apiKey: "AIzaSyCQZdI8k3D5Q5QAcLZWuo-XyiSPRS9nlOg",
     authDomain: "birdwatch-6079f.firebaseapp.com",
@@ -22,7 +70,6 @@ let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
 let profileChartInstance = null;
 let editingBirdId = null; 
 
-// Welcome Modal Lógica
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
 }
@@ -34,18 +81,10 @@ const closeWelcome = () => {
 document.getElementById('close-welcome-btn').addEventListener('click', closeWelcome);
 document.getElementById('close-x-welcome').addEventListener('click', closeWelcome);
 
-// ==========================================
-// LÓGICA DA PLAYLIST E AUTOPLAY 
-// ==========================================
-// Lembre-se de colocar aqui o nome exato dos seus arquivos MP3 na pasta music
 const playlist = [
-    "music/ambient01.mp3",
-    "music/ambient02.mp3",
-    "music/ambient03.mp3",
-    "music/ambient04.mp3",
-    "music/ambient05.mp3",
-    "music/ambient06.mp3",
-    "music/ambient07.mp3"
+    "music/track1.mp3",
+    "music/track2.mp3",
+    "music/track3.mp3"
 ];
 
 let currentTrackIndex = 0;
@@ -69,9 +108,8 @@ bgMusic.addEventListener('ended', () => {
     bgMusic.play();
 });
 
-// Ação de Ligar/Desligar manualmente no Botão
 toggleMusicBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // Evita conflitos com o clique global
+    e.stopPropagation(); 
     if (bgMusic.paused) {
         if (!bgMusic.src || bgMusic.src === window.location.href) {
             loadTrack(currentTrackIndex);
@@ -80,7 +118,7 @@ toggleMusicBtn.addEventListener('click', (e) => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
             isMusicPlaying = true;
-        }).catch(err => console.log("Áudio bloqueado.", err));
+        }).catch(err => console.log(window.translations[window.currentLang].alert_blocked_audio));
     } else {
         bgMusic.pause();
         iconMusicOn.classList.add('hidden');
@@ -89,7 +127,6 @@ toggleMusicBtn.addEventListener('click', (e) => {
     }
 });
 
-// Truque para iniciar a música no primeiro clique em qualquer lugar da tela
 const startMusicOnInteraction = () => {
     if (!isMusicPlaying) {
         if (!bgMusic.src || bgMusic.src === window.location.href) {
@@ -99,13 +136,11 @@ const startMusicOnInteraction = () => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
             isMusicPlaying = true;
-        }).catch(err => console.log("Aguardando interação para tocar."));
+        }).catch(err => console.log("Aguardando interação"));
     }
-    // Remove este evento para não sobrecarregar o site depois da primeira vez
     document.removeEventListener('click', startMusicOnInteraction);
 };
 document.addEventListener('click', startMusicOnInteraction);
-// ==========================================
 
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
@@ -149,15 +184,16 @@ function iniciarRegistro(lat, lng) {
     currentLat = lat;
     currentLng = lng;
     
-    document.getElementById('modal-title-bird').innerText = "Record a Discovery";
-    document.getElementById('bird-location').value = "Loading location...";
+    const t = window.translations[window.currentLang];
+    document.getElementById('modal-title-bird').innerText = t.modal_record_title;
+    document.getElementById('bird-location').value = t.loading_loc;
     document.getElementById('add-bird-modal').classList.remove('hidden');
     
     fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLng}&format=json`)
         .then(res => res.json())
         .then(data => {
-            const locName = data.address.city || data.address.town || data.address.state || data.address.country || "Unknown Location";
-            currentCountry = data.address.country || "Unknown Country";
+            const locName = data.address.city || data.address.town || data.address.state || data.address.country || t.unknown_loc;
+            currentCountry = data.address.country || t.unknown_country;
             document.getElementById('bird-location').value = `${locName}, ${currentCountry}`;
         });
 }
@@ -190,14 +226,12 @@ function iniciarMapa() {
         });
     }
 
-    // Menus e Modais
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
     document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
     document.getElementById('nav-about').addEventListener('click', () => document.getElementById('welcome-modal').classList.remove('hidden'));
     
-    // Botões originais e X
     document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
     document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
     document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
@@ -210,11 +244,12 @@ function iniciarMapa() {
     document.getElementById('close-x-achievements').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
     document.getElementById('close-x-profile').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
-    // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        if (file.size > 10 * 1024 * 1024) return alert("File is larger than 10MB!");
+        
+        const t = window.translations[window.currentLang];
+        if (file.size > 10 * 1024 * 1024) return alert(t.err_large_file);
 
         exifr.parse(file).then(exif => {
             if (exif && exif.DateTimeOriginal) document.getElementById('bird-date').value = exif.DateTimeOriginal.toLocaleString();
@@ -238,10 +273,11 @@ function iniciarMapa() {
         document.getElementById('crop-modal').classList.add('hidden');
     });
 
-    // Salvar no BD
     document.getElementById('save-bird-btn').addEventListener('click', async () => {
         const btn = document.getElementById('save-bird-btn');
-        btn.innerText = "Saving...";
+        const t = window.translations[window.currentLang];
+        
+        btn.innerText = t.btn_saving;
         btn.disabled = true;
 
         try {
@@ -260,7 +296,7 @@ function iniciarMapa() {
                 lat: currentLat,
                 lng: currentLng,
                 location: document.getElementById('bird-location').value,
-                country: currentCountry || "Unknown",
+                country: currentCountry || t.unknown_country,
                 date: document.getElementById('bird-date').value,
                 equipment: document.getElementById('bird-equip').value,
                 informalName: document.getElementById('bird-informal-name').value,
@@ -279,9 +315,9 @@ function iniciarMapa() {
             atualizarPinosNoMapa();
         } catch (error) {
             console.error(error);
-            alert("Error saving data.");
+            alert(window.translations[window.currentLang].err_saving);
         } finally {
-            btn.innerText = "Save Discovery";
+            btn.innerText = window.translations[window.currentLang].btn_save;
             btn.disabled = false;
         }
     });
@@ -298,7 +334,8 @@ function resetAndCloseDataModal() {
     document.getElementById('cropped-preview-container').classList.add('hidden');
     currentCroppedDataUrl = null;
     editingBirdId = null;
-    document.getElementById('modal-title-bird').innerText = "Record a Discovery";
+    
+    document.getElementById('modal-title-bird').innerText = window.translations[window.currentLang].modal_record_title;
 }
 
 async function atualizarPinosNoMapa() {
@@ -313,20 +350,23 @@ async function atualizarPinosNoMapa() {
         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
     });
 
+    const t = window.translations[window.currentLang];
     const querySnapshot = await getDocs(collection(db, "birds"));
     querySnapshot.forEach((doc) => {
         const data = doc.data();
         if (data.userId === auth.currentUser.uid) {
             L.marker([data.lat, data.lng], {icon: greenIcon})
               .addTo(map)
-              .bindPopup(`<b>${data.informalName || 'Bird'}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`);
+              .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`);
         }
     });
 }
 
 async function abrirModalEspecies() {
     const list = document.getElementById('species-list');
-    list.innerHTML = "Loading...";
+    const t = window.translations[window.currentLang];
+    
+    list.innerHTML = t.loading;
     document.getElementById('species-modal').classList.remove('hidden');
 
     const querySnapshot = await getDocs(collection(db, "birds"));
@@ -340,13 +380,13 @@ async function abrirModalEspecies() {
             list.innerHTML += `
                 <div class="species-card">
                     <img src="${data.photoUrl || ''}" alt="Bird">
-                    <h3>${data.informalName || 'Unknown'}</h3>
+                    <h3>${data.informalName || t.unknown_loc}</h3>
                     <p><i>${data.scientificName || '-'}</i></p>
                     <p>📍 ${data.location}</p>
                     <p>📅 ${data.date}</p>
                     <div class="card-actions">
-                        <button class="card-action-btn edit-bird-btn" data-id="${doc.id}">✏️ Edit</button>
-                        <button class="card-action-btn delete-bird-btn" data-id="${doc.id}">🗑️ Delete</button>
+                        <button class="card-action-btn edit-bird-btn" data-id="${doc.id}">${t.btn_edit}</button>
+                        <button class="card-action-btn delete-bird-btn" data-id="${doc.id}">${t.btn_delete}</button>
                     </div>
                 </div>
             `;
@@ -354,11 +394,11 @@ async function abrirModalEspecies() {
     });
 
     if (list.innerHTML === "") {
-        list.innerHTML = "<p>No species found yet. Start exploring!</p>";
+        list.innerHTML = `<p>${t.no_species}</p>`;
     } else {
         document.querySelectorAll('.delete-bird-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                if(confirm("Are you sure you want to delete this discovery?")) {
+                if(confirm(t.confirm_delete)) {
                     const id = e.target.getAttribute('data-id');
                     await deleteDoc(doc(db, "birds", id));
                     abrirModalEspecies();
@@ -377,7 +417,7 @@ async function abrirModalEspecies() {
                 currentLng = bird.lng;
                 currentCountry = bird.country;
 
-                document.getElementById('modal-title-bird').innerText = "Edit Discovery";
+                document.getElementById('modal-title-bird').innerText = t.modal_edit_title;
                 document.getElementById('bird-location').value = bird.location;
                 document.getElementById('bird-date').value = bird.date;
                 document.getElementById('bird-equip').value = bird.equipment;
@@ -393,7 +433,9 @@ async function abrirModalEspecies() {
 
 async function abrirModalConquistas() {
     const list = document.getElementById('achievements-list');
-    list.innerHTML = "Loading...";
+    const t = window.translations[window.currentLang];
+    
+    list.innerHTML = t.loading;
     document.getElementById('achievements-modal').classList.remove('hidden');
 
     const querySnapshot = await getDocs(collection(db, "birds"));
@@ -408,14 +450,14 @@ async function abrirModalConquistas() {
 
     list.innerHTML = "";
     if (Object.keys(countryCounts).length === 0) {
-        list.innerHTML = "<p>No achievements yet. Add your first record!</p>";
+        list.innerHTML = `<p>${t.no_achievements}</p>`;
         return;
     }
 
     for (const [country, count] of Object.entries(countryCounts)) {
         const progress = Math.min(count, 10);
         const percentage = (progress / 10) * 100;
-        const status = progress >= 10 ? "✅ Completed" : `${progress}/10`;
+        const status = progress >= 10 ? `✅ ${t.completed}` : `${progress}/10`;
         
         list.innerHTML += `
             <div class="achievement-card">
@@ -433,6 +475,7 @@ async function abrirModalConquistas() {
 
 async function abrirModalPerfil() {
     document.getElementById('profile-modal').classList.remove('hidden');
+    const t = window.translations[window.currentLang];
     
     const user = auth.currentUser;
     document.getElementById('profile-name').innerText = user.displayName || 'Explorer';
@@ -473,7 +516,7 @@ async function abrirModalPerfil() {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Birds per Country',
+                label: t.chart_label,
                 data: data,
                 backgroundColor: '#688a42',
                 borderRadius: 6
