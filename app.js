@@ -157,13 +157,15 @@ const startMusicOnInteraction = () => {
 };
 document.addEventListener('click', startMusicOnInteraction);
 
-// [NOVO] Otimização iOS: Pausar música se o navegador for para o background
+// [NOVO] Otimização Mobile: Pausar música se o aplicativo for para o segundo plano
 document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-        bgMusic.pause();
-    } else {
-        if (isMusicPlaying) {
-            bgMusic.play().catch(err => console.log("Retomada bloqueada pelo navegador.", err));
+    if (L.Browser.mobile) {
+        if (document.hidden) {
+            bgMusic.pause();
+        } else {
+            if (isMusicPlaying) {
+                bgMusic.play().catch(err => console.log("Retomada bloqueada pelo navegador.", err));
+            }
         }
     }
 });
