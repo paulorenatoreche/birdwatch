@@ -43,12 +43,16 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 .modal { background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
 .hidden { display: none !important; }
 
-.cozy-panel { background-color: var(--bg-parchment); padding: 35px; border-radius: 16px; width: 450px; border: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+.cozy-panel { position: relative; background-color: var(--bg-parchment); padding: 35px; border-radius: 16px; width: 450px; border: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
 .scrollable-panel { max-height: 90vh; overflow-y: auto; }
 .cozy-panel input { padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1em; background-color: #fff; }
 .cozy-btn { background-color: var(--accent-green); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.1em; transition: 0.2s; }
 .cozy-btn:hover { background-color: var(--accent-green-hover); transform: translateY(-1px); }
 .cozy-btn-secondary { background-color: transparent; color: var(--text-dark); border: 2px solid var(--text-dark); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+/* Botão X no topo dos Modais */
+.close-x-btn { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: transparent; border: none; font-size: 2em; font-weight: 300; color: var(--text-dark); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s ease; z-index: 10; line-height: 0; opacity: 0.5; }
+.close-x-btn:hover { opacity: 1; background-color: rgba(0, 0, 0, 0.08); color: var(--accent-green); }
 
 .text-center { text-align: center; } .mt-15 { margin-top: 15px; } .mt-auto { margin-top: auto; }
 
@@ -68,32 +72,6 @@ input[type="file"] { display: none; }
 .progress-bar { width: 100%; height: 12px; background-color: #d1c8b8; border-radius: 6px; overflow: hidden; }
 .progress-fill { height: 100%; background-color: var(--accent-green); transition: width 0.5s ease-in-out; }
 
-/* Adaptações Automáticas para Telas de Celular */
-@media (max-width: 768px) {
-    .app-container {
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        position: absolute;
-        height: 100%;
-        z-index: 9999; /* Fica por cima do mapa */
-        box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-    }
-    
-    /* Quando retraído no celular, fica bem fino para não atrapalhar */
-    .sidebar.collapsed {
-        width: 60px;
-        padding: 25px 5px;
-    }
-    
-    /* Janelas Modais se ajustam à largura menor */
-    .cozy-panel {
-        width: 95vw;
-        padding: 20px;
-    }
-}
-
 /* Dashboard do Perfil (Big Numbers e Gráficos) */
 .profile-header { border-bottom: 2px dashed var(--border-color); padding-bottom: 15px; }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
@@ -101,25 +79,11 @@ input[type="file"] { display: none; }
 .stat-value { font-size: 2.5em; font-family: 'Quicksand', sans-serif; font-weight: 700; color: var(--accent-green); line-height: 1; margin-bottom: 5px; }
 .stat-label { font-size: 0.85em; font-weight: bold; color: var(--text-dark); text-transform: uppercase; letter-spacing: 1px; }
 .chart-container { width: 100%; height: 250px; background: white; border: 2px solid var(--border-color); border-radius: 12px; padding: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
-/* Botão X no topo dos Modais */
-.cozy-panel {
-    position: relative; /* Garante que o X fique preso ao canto do painel */
-}
 
-.close-x-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    color: var(--text-dark);
-    cursor: pointer;
-    transition: color 0.2s;
-    z-index: 10;
-    line-height: 1;
-}
-
-.close-x-btn:hover {
-    color: var(--accent-green);
+/* Adaptações Automáticas para Telas de Celular */
+@media (max-width: 768px) {
+    .app-container { flex-direction: column; }
+    .sidebar { position: absolute; height: 100%; z-index: 9999; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
+    .sidebar.collapsed { width: 60px; padding: 25px 5px; }
+    .cozy-panel { width: 95vw; padding: 20px; }
 }
