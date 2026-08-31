@@ -35,11 +35,16 @@ nav button { width: 100%; background: none; border: none; text-align: left; font
 nav button:hover { background-color: rgba(255,255,255,0.6); }
 .sidebar.collapsed nav button { justify-content: center; font-size: 1.5em; }
 
-/* Rodapé do Pixabay */
-.sidebar-footer { text-align: center; margin-top: 15px; font-size: 0.85em; color: var(--text-dark); opacity: 0.8; }
+/* Rodapé e Seletor de Idiomas */
+.sidebar-footer { text-align: center; margin-top: 15px; font-size: 0.85em; color: var(--text-dark); opacity: 0.8; display: flex; flex-direction: column; gap: 10px; }
 .sidebar-footer a { color: var(--accent-green); text-decoration: none; font-weight: bold; }
 .sidebar-footer a:hover { text-decoration: underline; }
 .sidebar.collapsed .sidebar-footer { display: none; }
+
+.lang-selector { display: flex; justify-content: center; gap: 10px; }
+.lang-btn { background: none; border: none; font-size: 1.5em; cursor: pointer; opacity: 0.5; transition: 0.3s; filter: grayscale(100%); }
+.lang-btn:hover { opacity: 1; filter: grayscale(0%); }
+.lang-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); }
 
 .map-area { flex-grow: 1; position: relative; }
 #map { width: 100%; height: 100%; }
