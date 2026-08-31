@@ -54,10 +54,26 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Toggle Menu Lateral
 document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('collapsed');
 });
+
+// FUNÇÃO CENTRAL DE REGISTRO
+function iniciarRegistro(lat, lng) {
+    currentLat = lat;
+    currentLng = lng;
+    
+    document.getElementById('bird-location').value = "Loading location...";
+    document.getElementById('add-bird-modal').classList.remove('hidden');
+    
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLng}&format=json`)
+        .then(res => res.json())
+        .then(data => {
+            const locName = data.address.city || data.address.town || data.address.state || data.address.country || "Unknown Location";
+            currentCountry = data.address.country || "Unknown Country";
+            document.getElementById('bird-location').value = `${locName}, ${currentCountry}`;
+        });
+}
 
 function iniciarMapa() {
     map = L.map('map').setView([-14.235, -51.925], 4);
@@ -70,45 +86,37 @@ function iniciarMapa() {
 
     carregarAvesNoMapa(greenIcon);
 
-    // Lógica do Botão Direito (Context Menu)
+    // DETECÇÃO DE CELULAR VS COMPUTADOR
     let contextLat, contextLng;
-    map.on('contextmenu', (e) => {
-        contextLat = e.latlng.lat;
-        contextLng = e.latlng.lng;
-        
-        contextMenu.style.left = e.containerPoint.x + 'px';
-        contextMenu.style.top = e.containerPoint.y + 'px';
-        contextMenu.classList.remove('hidden');
-    });
+    
+    if (L.Browser.mobile) {
+        // Se for celular, clique simples no mapa já abre o registro
+        map.on('click', (e) => {
+            iniciarRegistro(e.latlng.lat, e.latlng.lng);
+        });
+    } else {
+        // Se for computador, mantém o botão direito (contextmenu)
+        map.on('contextmenu', (e) => {
+            contextLat = e.latlng.lat;
+            contextLng = e.latlng.lng;
+            
+            contextMenu.style.left = e.containerPoint.x + 'px';
+            contextMenu.style.top = e.containerPoint.y + 'px';
+            contextMenu.classList.remove('hidden');
+        });
 
-    // Fechar menu ao clicar normalmente no mapa
-    map.on('click', () => contextMenu.classList.add('hidden'));
+        map.on('click', () => contextMenu.classList.add('hidden'));
 
-    // Adicionar Registro via Botão Direito
-    document.getElementById('add-record-btn').addEventListener('click', () => {
-        contextMenu.classList.add('hidden');
-        currentLat = contextLat;
-        currentLng = contextLng;
-        
-        document.getElementById('bird-location').value = "Loading location...";
-        
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLng}&format=json`)
-            .then(res => res.json())
-            .then(data => {
-                const locName = data.address.city || data.address.town || data.address.state || data.address.country || "Unknown Location";
-                currentCountry = data.address.country || "Unknown Country";
-                document.getElementById('bird-location').value = `${locName}, ${currentCountry}`;
-            });
+        document.getElementById('add-record-btn').addEventListener('click', () => {
+            contextMenu.classList.add('hidden');
+            iniciarRegistro(contextLat, contextLng);
+        });
+    }
 
-        document.getElementById('add-bird-modal').classList.remove('hidden');
-    });
-
-    // Menus
+    // Menus e Modais
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
-
-    // Fechar Modais
     document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
     document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
     document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
