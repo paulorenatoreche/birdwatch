@@ -286,6 +286,7 @@ async function abrirModalConquistas() {
         `;
     }
 }
+
 async function abrirModalPerfil() {
     document.getElementById('profile-modal').classList.remove('hidden');
     
