@@ -57,7 +57,7 @@
     <!-- MODAL 1: PREENCHER DADOS -->
     <div id="add-bird-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel">
-            <button id="close-x-add" class="close-x-btn">✖</button>
+            <button id="close-x-add" class="close-x-btn">&times;</button>
             <h2>Record a Discovery</h2>
             <label class="custom-file-upload">
                 <input type="file" id="bird-photo-input" accept="image/*">
@@ -80,7 +80,7 @@
     <!-- MODAL 2: CORTAR FOTO -->
     <div id="crop-modal" class="modal hidden">
         <div class="modal-content cozy-panel" style="width: 90vw; max-width: 600px;">
-            <button id="close-x-crop" class="close-x-btn">✖</button>
+            <button id="close-x-crop" class="close-x-btn">&times;</button>
             <h2>Adjust Photo</h2>
             <div class="cropper-container">
                 <img id="image-to-crop" src="">
@@ -93,7 +93,7 @@
     <!-- MODAL 3: ESPÉCIES ENCONTRADAS -->
     <div id="species-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel" style="width: 80vw; max-width: 800px;">
-            <button id="close-x-species" class="close-x-btn">✖</button>
+            <button id="close-x-species" class="close-x-btn">&times;</button>
             <h2>My Discovered Species</h2>
             <div id="species-list" class="species-grid"></div>
             <button id="close-species-btn" class="cozy-btn-secondary mt-15">Close</button>
@@ -103,7 +103,7 @@
     <!-- MODAL 4: ACHIEVEMENTS -->
     <div id="achievements-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel" style="width: 80vw; max-width: 600px;">
-            <button id="close-x-achievements" class="close-x-btn">✖</button>
+            <button id="close-x-achievements" class="close-x-btn">&times;</button>
             <h2>My Achievements 🏆</h2>
             <p>Register 10 species to complete a country!</p>
             <div id="achievements-list"></div>
@@ -111,44 +111,43 @@
         </div>
     </div>
 
+    <!-- MODAL 5: MEU PERFIL -->
+    <div id="profile-modal" class="modal hidden">
+        <div class="modal-content cozy-panel scrollable-panel" style="width: 85vw; max-width: 700px;">
+            <button id="close-x-profile" class="close-x-btn">&times;</button>
+            <div class="profile-header text-center">
+                <h2 id="profile-name">Name</h2>
+                <p id="profile-email">email@example.com</p>
+            </div>
+            
+            <h3 class="mt-15 text-center">Your Explorer Stats</h3>
+            <div class="stats-grid mt-15">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total-birds">0</div>
+                    <div class="stat-label">Total Birds</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total-countries">0</div>
+                    <div class="stat-label">Countries Explored</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-conquered">0</div>
+                    <div class="stat-label">Conquered (10+)</div>
+                </div>
+            </div>
+
+            <div class="chart-container mt-15">
+                <canvas id="profileChart"></canvas>
+            </div>
+
+            <button id="close-profile-btn" class="cozy-btn-secondary mt-15">Close</button>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="app.js"></script>
-<!-- Script para desenhar os gráficos -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- MODAL 5: MEU PERFIL -->
-<div id="profile-modal" class="modal hidden">
-    <div class="modal-content cozy-panel scrollable-panel" style="width: 85vw; max-width: 700px;">
-        <div class="profile-header text-center">
-            <button id="close-x-profile" class="close-x-btn">✖</button>
-            <h2 id="profile-name">Name</h2>
-            <p id="profile-email">email@example.com</p>
-        </div>
-        
-        <h3 class="mt-15 text-center">Your Explorer Stats</h3>
-        <div class="stats-grid mt-15">
-            <div class="stat-card">
-                <div class="stat-value" id="stat-total-birds">0</div>
-                <div class="stat-label">Total Birds</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-total-countries">0</div>
-                <div class="stat-label">Countries Explored</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-conquered">0</div>
-                <div class="stat-label">Conquered (10+)</div>
-            </div>
-        </div>
-
-        <div class="chart-container mt-15">
-            <canvas id="profileChart"></canvas>
-        </div>
-
-        <button id="close-profile-btn" class="cozy-btn-secondary mt-15">Close</button>
-    </div>
-</div>
 </body>
 </html>
