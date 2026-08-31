@@ -148,7 +148,7 @@ input[type="file"] { display: none; }
 
 @media (max-width: 768px) {
     .app-container { flex-direction: column; }
-    .sidebar { position: absolute; height: 100%; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
+    .sidebar { position: absolute; height: 100%; z-index: 9999; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
     .sidebar.collapsed { width: 75px; padding: 25px 10px; }
     .cozy-panel { width: 95vw; padding: 20px; }
     /* Ajusta a barra de busca no celular para não bater no menu lateral */
