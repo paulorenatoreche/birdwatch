@@ -223,17 +223,16 @@ function iniciarMapa() {
     map = L.map('map').setView([-14.235, -51.925], 4);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-    // [NOVO] Adiciona o Controle de Busca (Geocoder)
     L.Control.geocoder({
         defaultMarkGeocode: false,
-        placeholder: "Search for a place..."
+        placeholder: "Search for a place...",
+        collapsed: false
     }).on('markgeocode', function(e) {
         map.fitBounds(e.geocode.bbox);
     }).addTo(map);
 
-    // [NOVO] Controle para Localizar o Usuário (GPS)
     L.Control.LocateMe = L.Control.extend({
-        options: { position: 'topright' },
+        options: { position: 'topleft' },
         onAdd: function(map) {
             const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
             btn.innerHTML = '📍';
@@ -247,9 +246,8 @@ function iniciarMapa() {
     });
     map.addControl(new L.Control.LocateMe());
 
-    // [NOVO] Controle para Zoom All (Todos os Pinos)
     L.Control.ZoomAll = L.Control.extend({
-        options: { position: 'topright' },
+        options: { position: 'topleft' },
         onAdd: function(map) {
             const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
             btn.innerHTML = '🌍';
@@ -410,7 +408,6 @@ function resetAndCloseDataModal() {
 }
 
 async function atualizarPinosNoMapa() {
-    // [NOVO] O sistema agora armazena os pinos em um Grupo para conseguir dar o Zoom All
     if (!window.markerGroup) {
         window.markerGroup = L.featureGroup().addTo(map);
     } else {
@@ -434,7 +431,6 @@ async function atualizarPinosNoMapa() {
         if (data.userId === auth.currentUser.uid) {
             if (data.equipment) equipSet.add(data.equipment);
             
-            // Agora adiciona os pinos dentro do Grupo (markerGroup)
             L.marker([data.lat, data.lng], {icon: cozyPin})
               .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`)
               .addTo(window.markerGroup);
