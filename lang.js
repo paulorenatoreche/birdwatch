@@ -12,7 +12,6 @@ window.translations = {
         
         menu_species: "Found Species",
         menu_achievements: "Achievements",
-        menu_db: "Global Database",
         menu_profile: "My Profile",
         menu_about: "About it",
         menu_suggestions: "Suggestions",
@@ -77,7 +76,6 @@ window.translations = {
         
         menu_species: "Espécies Encontradas",
         menu_achievements: "Conquistas",
-        menu_db: "Dados Globais",
         menu_profile: "Meu Perfil",
         menu_about: "Sobre o projeto",
         menu_suggestions: "Sugestões",
@@ -142,7 +140,6 @@ window.translations = {
         
         menu_species: "Especies Encontradas",
         menu_achievements: "Logros",
-        menu_db: "Datos Globales",
         menu_profile: "Mi Perfil",
         menu_about: "Sobre el proyecto",
         menu_suggestions: "Sugerencias",
