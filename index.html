@@ -40,6 +40,7 @@
                     <li><button id="nav-species">🦉 <span class="nav-text">Found Species</span></button></li>
                     <li><button id="nav-achievements">🏆 <span class="nav-text">Achievements</span></button></li>
                     <li><button id="nav-db">📚 <span class="nav-text">Global Database</span></button></li>
+                    <li><button id="nav-profile">👤 <span class="nav-text">My Profile</span></button></li>
                 </ul>
             </nav>
             <button id="logout-btn" class="cozy-btn-secondary mt-auto">🚪 <span class="nav-text">Logout</span></button>
@@ -111,5 +112,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script type="module" src="app.js"></script>
+<!-- Script para desenhar os gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- MODAL 5: MEU PERFIL -->
+<div id="profile-modal" class="modal hidden">
+    <div class="modal-content cozy-panel scrollable-panel" style="width: 85vw; max-width: 700px;">
+        <div class="profile-header text-center">
+            <h2 id="profile-name">Name</h2>
+            <p id="profile-email">email@example.com</p>
+        </div>
+        
+        <h3 class="mt-15 text-center">Your Explorer Stats</h3>
+        <div class="stats-grid mt-15">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-total-birds">0</div>
+                <div class="stat-label">Total Birds</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-total-countries">0</div>
+                <div class="stat-label">Countries Explored</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-conquered">0</div>
+                <div class="stat-label">Conquered (10+)</div>
+            </div>
+        </div>
+
+        <div class="chart-container mt-15">
+            <canvas id="profileChart"></canvas>
+        </div>
+
+        <button id="close-profile-btn" class="cozy-btn-secondary mt-15">Close</button>
+    </div>
+</div>
 </body>
 </html>
