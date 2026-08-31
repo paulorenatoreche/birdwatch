@@ -325,7 +325,6 @@ function iniciarMapa() {
         });
     }
 
-    document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
     document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
