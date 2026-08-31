@@ -4,6 +4,13 @@ import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteD
 import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
 // ==========================================
+// VARIÁVEIS GLOBAIS (Movidas para o topo para evitar travamento)
+// ==========================================
+let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
+let profileChartInstance = null;
+let editingBirdId = null; 
+
+// ==========================================
 // LÓGICA DE IDIOMAS (I18N)
 // ==========================================
 window.currentLang = localStorage.getItem('birdwatch_lang') || 'en';
@@ -38,7 +45,7 @@ function applyLanguage(lang) {
     });
 
     // Atualiza título dinâmico se a janela estiver fechada
-    if (!editingBirdId) {
+    if (!editingBirdId && document.getElementById('modal-title-bird')) {
         document.getElementById('modal-title-bird').innerText = window.translations[lang].modal_record_title;
     }
 }
@@ -49,8 +56,10 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 });
 // Aplica a linguagem salva no primeiro load
 applyLanguage(window.currentLang);
-// ==========================================
 
+// ==========================================
+// CONFIGURAÇÃO DO FIREBASE
+// ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyCQZdI8k3D5Q5QAcLZWuo-XyiSPRS9nlOg",
     authDomain: "birdwatch-6079f.firebaseapp.com",
@@ -66,10 +75,9 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
-let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
-let profileChartInstance = null;
-let editingBirdId = null; 
-
+// ==========================================
+// MODAL DE BOAS-VINDAS
+// ==========================================
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
 }
@@ -81,6 +89,9 @@ const closeWelcome = () => {
 document.getElementById('close-welcome-btn').addEventListener('click', closeWelcome);
 document.getElementById('close-x-welcome').addEventListener('click', closeWelcome);
 
+// ==========================================
+// LÓGICA DA PLAYLIST DE MÚSICA
+// ==========================================
 const playlist = [
     "music/ambient01.mp3",
     "music/ambient02.mp3",
@@ -146,6 +157,9 @@ const startMusicOnInteraction = () => {
 };
 document.addEventListener('click', startMusicOnInteraction);
 
+// ==========================================
+// AUTENTICAÇÃO E LOGIN
+// ==========================================
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
 const mainApp = document.getElementById('main-app');
@@ -184,6 +198,9 @@ document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('collapsed');
 });
 
+// ==========================================
+// MAPA E REGISTROS
+// ==========================================
 function iniciarRegistro(lat, lng) {
     currentLat = lat;
     currentLng = lng;
@@ -230,6 +247,7 @@ function iniciarMapa() {
         });
     }
 
+    // Menus e Modais
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
@@ -248,6 +266,7 @@ function iniciarMapa() {
     document.getElementById('close-x-achievements').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
     document.getElementById('close-x-profile').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
+    // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
