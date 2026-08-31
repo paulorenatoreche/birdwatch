@@ -87,7 +87,7 @@ document.getElementById('close-welcome-btn').addEventListener('click', closeWelc
 document.getElementById('close-x-welcome').addEventListener('click', closeWelcome);
 
 // ==========================================
-// 5. LÓGICA DA PLAYLIST DE MÚSICA
+// 5. LÓGICA DA PLAYLIST DE MÚSICA & OTIMIZAÇÃO iOS
 // ==========================================
 const playlist = [
     "music/ambient01.mp3",
@@ -157,6 +157,17 @@ const startMusicOnInteraction = () => {
 };
 document.addEventListener('click', startMusicOnInteraction);
 
+// [NOVO] Otimização iOS: Pausar música se o navegador for para o background
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        bgMusic.pause();
+    } else {
+        if (isMusicPlaying) {
+            bgMusic.play().catch(err => console.log("Retomada bloqueada pelo navegador.", err));
+        }
+    }
+});
+
 // ==========================================
 // 6. AUTENTICAÇÃO E LOGIN
 // ==========================================
@@ -224,14 +235,6 @@ function iniciarMapa() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     L.control.zoom({ position: 'topleft' }).addTo(map);
-
-    L.Control.geocoder({
-        defaultMarkGeocode: false,
-        placeholder: "Search for a place...",
-        collapsed: false
-    }).on('markgeocode', function(e) {
-        map.fitBounds(e.geocode.bbox);
-    }).addTo(map);
 
     L.Control.LocateMe = L.Control.extend({
         options: { position: 'topleft' },
