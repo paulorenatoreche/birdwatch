@@ -48,33 +48,49 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 
 .map-area { flex-grow: 1; position: relative; }
 #map { width: 100%; height: 100%; z-index: 1; }
-
-/* Pino Hand-made do Mapa */
 .clear-pin { background: transparent; border: none; }
 
 /* ========================================================
-   NOVOS CONTROLES LEAFLET (Busca, GPS, Zoom All) 
+   CONTROLES LEAFLET COZY (Busca, Zoom +/-, GPS, Zoom All) 
    ======================================================== */
-.custom-leaflet-btn {
-    background-color: var(--bg-parchment);
+.leaflet-bar {
+    border: none !important;
+    box-shadow: none !important;
+}
+.leaflet-top .leaflet-control {
+    margin-bottom: 8px !important;
+}
+
+.leaflet-bar a, .custom-leaflet-btn {
+    background-color: var(--bg-parchment) !important;
     border: 2px solid var(--border-color) !important;
-    color: var(--text-dark);
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.3em;
+    color: var(--text-dark) !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     border-radius: 8px !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-    transition: all 0.2s;
-    margin-bottom: 8px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1.3em !important;
+    line-height: 1 !important;
 }
-.custom-leaflet-btn:hover {
-    background-color: var(--sidebar-wood);
-    color: var(--accent-green);
+
+.leaflet-bar a:hover, .custom-leaflet-btn:hover {
+    background-color: var(--sidebar-wood) !important;
+    color: var(--accent-green) !important;
+    transform: translateY(-2px);
 }
+
+.custom-leaflet-btn svg {
+    stroke: currentColor;
+}
+
+/* Customização da Barra de Pesquisa (Geocoder) */
 .leaflet-control-geocoder {
     position: fixed !important;
     top: 20px !important;
@@ -85,15 +101,41 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
     border-radius: 8px !important;
     background-color: var(--bg-parchment) !important;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
 }
+
+/* Lupa Cozy */
 .leaflet-control-geocoder-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c4d42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") !important;
+    background-size: 18px !important;
+    background-position: center !important;
     background-color: transparent !important;
-    border-radius: 8px 0 0 8px !important;
+    background-repeat: no-repeat !important;
+    width: 36px !important;
+    height: 36px !important;
+    border: none !important;
 }
+
+/* Loading Cozy */
+.leaflet-control-geocoder-throbber .leaflet-control-geocoder-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23688a42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3E%3C/svg%3E") !important;
+    animation: cozy-spin 1s linear infinite !important;
+}
+@keyframes cozy-spin { 100% { transform: rotate(360deg); } }
+
 .leaflet-control-geocoder-form input {
-    font-family: 'Nunito', sans-serif;
-    color: var(--text-dark);
+    font-family: 'Nunito', sans-serif !important;
+    color: var(--text-dark) !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    height: 36px !important;
+    padding-left: 5px !important;
 }
+
+/* ======================================================== */
 
 /* Menu de Botão Direito (Context Menu) */
 #map-context-menu { position: absolute; z-index: 10000; background: white; border: 2px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); padding: 5px; min-width: 150px; }
@@ -107,7 +149,18 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 
 .cozy-panel { position: relative; background-color: var(--bg-parchment); padding: 35px; border-radius: 16px; width: 450px; border: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
 .scrollable-panel { max-height: 90vh; overflow-y: auto; }
-.cozy-panel input { padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1em; background-color: #fff; }
+
+/* Forçando a Fonte do Date Picker */
+.cozy-panel input, .cozy-panel input[type="date"] { 
+    padding: 12px; 
+    border: 2px solid var(--border-color); 
+    border-radius: 8px; 
+    font-size: 1em; 
+    background-color: #fff; 
+    font-family: 'Nunito', sans-serif !important; 
+    color: var(--text-dark); 
+}
+
 .cozy-btn { background-color: var(--accent-green); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.1em; transition: 0.2s; }
 .cozy-btn:hover { background-color: var(--accent-green-hover); transform: translateY(-1px); }
 .cozy-btn-secondary { background-color: transparent; color: var(--text-dark); border: 2px solid var(--text-dark); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
