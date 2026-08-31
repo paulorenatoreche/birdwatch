@@ -6,7 +6,7 @@ import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstat
 // ==========================================
 // 1. VARIÁVEIS GLOBAIS
 // ==========================================
-let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
+let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry, currentState;
 let profileChartInstance = null;
 let editingBirdId = null; 
 
@@ -227,6 +227,8 @@ function iniciarRegistro(lat, lng) {
         .then(data => {
             const locName = data.address.city || data.address.town || data.address.state || data.address.country || t.unknown_loc;
             currentCountry = data.address.country || t.unknown_country;
+            currentState = data.address.state || ""; 
+            
             document.getElementById('bird-location').value = `${locName}, ${currentCountry}`;
         });
 }
@@ -242,9 +244,7 @@ function iniciarMapa() {
         onAdd: function(map) {
             const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
             
-            // SVG Original do GPS
             const originalSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`;
-            // SVG de Loading
             const loadingSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: cozy-spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
             
             btn.innerHTML = originalSVG;
@@ -397,6 +397,7 @@ function iniciarMapa() {
                 lng: currentLng,
                 location: document.getElementById('bird-location').value,
                 country: currentCountry || t.unknown_country,
+                state: currentState || "", 
                 date: document.getElementById('bird-date').value,
                 equipment: document.getElementById('bird-equip').value,
                 informalName: document.getElementById('bird-informal-name').value,
@@ -458,15 +459,21 @@ async function atualizarPinosNoMapa() {
     const t = window.translations ? window.translations[window.currentLang] : { default_bird: "Bird" };
     const querySnapshot = await getDocs(collection(db, "birds"));
     const equipSet = new Set();
+    const missingStateDocs = [];
 
-    querySnapshot.forEach((doc) => {
-        const data = doc.data();
+    querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
         if (data.userId === auth.currentUser.uid) {
             if (data.equipment) equipSet.add(data.equipment);
             
             L.marker([data.lat, data.lng], {icon: cozyPin})
               .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`)
               .addTo(window.markerGroup);
+
+            // Adiciona registros antigos à fila de processamento em background (Beta Users)
+            if ((data.country === 'Brasil' || data.country === 'Brazil') && !data.state) {
+                missingStateDocs.push({ id: docSnap.id, lat: data.lat, lng: data.lng });
+            }
         }
     });
 
@@ -478,6 +485,23 @@ async function atualizarPinosNoMapa() {
             option.value = equip;
             equipDatalist.appendChild(option);
         });
+    }
+
+    // Processamento silencioso em background para corrigir os registros sem Estado dos usuários Beta
+    if (missingStateDocs.length > 0) {
+        (async () => {
+            for (const item of missingStateDocs) {
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${item.lat}&lon=${item.lng}&format=json`);
+                    const revData = await res.json();
+                    const state = revData.address.state || "Estado Desconhecido";
+                    await updateDoc(doc(db, "birds", item.id), { state: state });
+                    await new Promise(r => setTimeout(r, 1100)); // Limite de 1 req/seg da API Nominatim
+                } catch(e) {
+                    console.error("Erro na atualização de background", e);
+                }
+            }
+        })();
     }
 }
 
@@ -535,6 +559,7 @@ async function abrirModalEspecies() {
                 currentLat = bird.lat;
                 currentLng = bird.lng;
                 currentCountry = bird.country;
+                currentState = bird.state || "";
 
                 document.getElementById('modal-title-bird').innerText = t.modal_edit_title;
                 document.getElementById('bird-location').value = bird.location;
@@ -563,7 +588,12 @@ async function abrirModalConquistas() {
     querySnapshot.forEach((doc) => {
         const data = doc.data();
         if (data.userId === auth.currentUser.uid && data.country) {
-            countryCounts[data.country] = (countryCounts[data.country] || 0) + 1;
+            let regionKey = data.country;
+            // Valida se é Brasil e cria a chave estadual
+            if (regionKey === 'Brasil' || regionKey === 'Brazil') {
+                regionKey = data.state ? `Brasil - ${data.state}` : `Brasil (Processando...)`;
+            }
+            countryCounts[regionKey] = (countryCounts[regionKey] || 0) + 1;
         }
     });
 
@@ -609,7 +639,11 @@ async function abrirModalPerfil() {
         if (data.userId === user.uid) {
             totalBirds++;
             if (data.country) {
-                countryCounts[data.country] = (countryCounts[data.country] || 0) + 1;
+                let regionKey = data.country;
+                if (regionKey === 'Brasil' || regionKey === 'Brazil') {
+                    regionKey = data.state ? `Brasil - ${data.state}` : `Brasil (Processando...)`;
+                }
+                countryCounts[regionKey] = (countryCounts[regionKey] || 0) + 1;
             }
         }
     });
