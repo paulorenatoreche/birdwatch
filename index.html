@@ -13,7 +13,8 @@
 <body>
     <!-- WELCOME MODAL -->
     <div id="welcome-modal" class="overlay-screen hidden">
-        <div class="cozy-panel text-center" style="max-width: 500px; padding: 45px;">
+        <div class="cozy-panel text-center" style="max-width: 500px; padding: 45px; position: relative;">
+            <button id="close-x-welcome" class="close-x-btn">&times;</button>
             <h2 class="cozy-title" style="border: none; margin-bottom: 10px;">Welcome! 🐦</h2>
             <p style="line-height: 1.6; text-align: justify; font-size: 1.05em;">
                 Hello there! Thank you for exploring and showing interest in <b>birdWatch</b>. This is a personal project lovingly crafted for my girlfriend to encourage our outdoor adventures, aiming to support one of her fondest hobbies: <b>birdwatching</b>. I genuinely hope this platform enriches your own birding experiences as well. If you have any suggestions, please feel free to drop me a message. <br> <br> <b>Happy birding!</b>
@@ -50,6 +51,7 @@
                     <li><button id="nav-achievements">🏆 <span class="nav-text">Achievements</span></button></li>
                     <li><button id="nav-db">📚 <span class="nav-text">Global Database</span></button></li>
                     <li><button id="nav-profile">👤 <span class="nav-text">My Profile</span></button></li>
+                    <li><button id="nav-about">🐦 <span class="nav-text">About it</span></button></li>
                 </ul>
             </nav>
             <button id="logout-btn" class="cozy-btn-secondary mt-auto">🚪 <span class="nav-text">Logout</span></button>
