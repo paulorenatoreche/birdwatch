@@ -96,7 +96,10 @@ const playlist = [
     "music/ambient04.mp3",
     "music/ambient05.mp3",
     "music/ambient06.mp3",
-    "music/ambient07.mp3"
+    "music/ambient07.mp3",
+    "music/ambient08.mp3",
+    "music/ambient09.mp3",
+    "music/ambient10.mp3"
 ];
 
 let currentTrackIndex = 0;
