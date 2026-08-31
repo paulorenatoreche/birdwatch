@@ -159,4 +159,7 @@ input[type="file"] { display: none; }
     .sidebar { position: absolute; height: 100%; z-index: 9999; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
     .sidebar.collapsed { width: 75px; padding: 25px 10px; }
     .cozy-panel { width: 95vw; padding: 20px; }
+    
+    /* Garante que os botões do mapa não fiquem escondidos atrás da barra lateral no celular */
+    .leaflet-left { left: 75px !important; transition: left 0.3s ease; }
 }
