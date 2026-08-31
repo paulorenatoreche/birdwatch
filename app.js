@@ -4,14 +4,14 @@ import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteD
 import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
 // ==========================================
-// VARIÁVEIS GLOBAIS (Movidas para o topo para evitar travamento)
+// 1. VARIÁVEIS GLOBAIS (No topo para evitar erros de Referência)
 // ==========================================
 let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
 let profileChartInstance = null;
 let editingBirdId = null; 
 
 // ==========================================
-// LÓGICA DE IDIOMAS (I18N)
+// 2. LÓGICA DE IDIOMAS (I18N)
 // ==========================================
 window.currentLang = localStorage.getItem('birdwatch_lang') || 'en';
 
@@ -19,15 +19,13 @@ function applyLanguage(lang) {
     window.currentLang = lang;
     localStorage.setItem('birdwatch_lang', lang);
     
-    // Atualiza botões ativos no menu
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
 
-    // Atualiza textos estáticos
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
-        if (window.translations[lang][key]) {
+        if (window.translations && window.translations[lang][key]) {
             if(element.tagName === "P" && key === "welcome_text") {
                 element.innerHTML = window.translations[lang][key];
             } else {
@@ -36,29 +34,31 @@ function applyLanguage(lang) {
         }
     });
 
-    // Atualiza placeholders de inputs
     document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
         const key = element.getAttribute('data-i18n-placeholder');
-        if (window.translations[lang][key]) {
+        if (window.translations && window.translations[lang][key]) {
             element.placeholder = window.translations[lang][key];
         }
     });
 
-    // Atualiza título dinâmico se a janela estiver fechada
     if (!editingBirdId && document.getElementById('modal-title-bird')) {
-        document.getElementById('modal-title-bird').innerText = window.translations[lang].modal_record_title;
+        if(window.translations) {
+            document.getElementById('modal-title-bird').innerText = window.translations[lang].modal_record_title;
+        }
     }
 }
 
-// Configura os cliques nas bandeiras
 document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', (e) => applyLanguage(e.target.getAttribute('data-lang')));
 });
-// Aplica a linguagem salva no primeiro load
-applyLanguage(window.currentLang);
+
+// Timeout rápido para garantir que o lang.js foi carregado no HTML antes de aplicar
+setTimeout(() => {
+    applyLanguage(window.currentLang);
+}, 100);
 
 // ==========================================
-// CONFIGURAÇÃO DO FIREBASE
+// 3. CONFIGURAÇÃO DO FIREBASE
 // ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyCQZdI8k3D5Q5QAcLZWuo-XyiSPRS9nlOg",
@@ -76,7 +76,7 @@ const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 // ==========================================
-// MODAL DE BOAS-VINDAS
+// 4. MODAL DE BOAS-VINDAS
 // ==========================================
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
@@ -90,7 +90,7 @@ document.getElementById('close-welcome-btn').addEventListener('click', closeWelc
 document.getElementById('close-x-welcome').addEventListener('click', closeWelcome);
 
 // ==========================================
-// LÓGICA DA PLAYLIST DE MÚSICA
+// 5. LÓGICA DA PLAYLIST DE MÚSICA
 // ==========================================
 const playlist = [
     "music/ambient01.mp3",
@@ -133,7 +133,7 @@ toggleMusicBtn.addEventListener('click', (e) => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
             isMusicPlaying = true;
-        }).catch(err => console.log(window.translations[window.currentLang].alert_blocked_audio));
+        }).catch(err => console.log("Áudio bloqueado pelo navegador.", err));
     } else {
         bgMusic.pause();
         iconMusicOn.classList.add('hidden');
@@ -151,14 +151,14 @@ const startMusicOnInteraction = () => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
             isMusicPlaying = true;
-        }).catch(err => console.log("Aguardando interação"));
+        }).catch(err => console.log("Aguardando interação para áudio"));
     }
     document.removeEventListener('click', startMusicOnInteraction);
 };
 document.addEventListener('click', startMusicOnInteraction);
 
 // ==========================================
-// AUTENTICAÇÃO E LOGIN
+// 6. AUTENTICAÇÃO E LOGIN
 // ==========================================
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
@@ -199,13 +199,13 @@ document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
 });
 
 // ==========================================
-// MAPA E REGISTROS
+// 7. MAPA E REGISTROS
 // ==========================================
 function iniciarRegistro(lat, lng) {
     currentLat = lat;
     currentLng = lng;
     
-    const t = window.translations[window.currentLang];
+    const t = window.translations ? window.translations[window.currentLang] : { modal_record_title: "Record a Discovery", loading_loc: "Loading location...", unknown_loc: "Unknown", unknown_country: "Unknown" };
     document.getElementById('modal-title-bird').innerText = t.modal_record_title;
     document.getElementById('bird-location').value = t.loading_loc;
     document.getElementById('add-bird-modal').classList.remove('hidden');
@@ -247,7 +247,6 @@ function iniciarMapa() {
         });
     }
 
-    // Menus e Modais
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
@@ -266,12 +265,11 @@ function iniciarMapa() {
     document.getElementById('close-x-achievements').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
     document.getElementById('close-x-profile').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
-    // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
         
-        const t = window.translations[window.currentLang];
+        const t = window.translations ? window.translations[window.currentLang] : { err_large_file: "File too large!" };
         if (file.size > 10 * 1024 * 1024) return alert(t.err_large_file);
 
         exifr.parse(file).then(exif => {
@@ -298,7 +296,7 @@ function iniciarMapa() {
 
     document.getElementById('save-bird-btn').addEventListener('click', async () => {
         const btn = document.getElementById('save-bird-btn');
-        const t = window.translations[window.currentLang];
+        const t = window.translations ? window.translations[window.currentLang] : { btn_saving: "Saving...", btn_save: "Save Discovery", err_saving: "Error saving." };
         
         btn.innerText = t.btn_saving;
         btn.disabled = true;
@@ -338,9 +336,9 @@ function iniciarMapa() {
             atualizarPinosNoMapa();
         } catch (error) {
             console.error(error);
-            alert(window.translations[window.currentLang].err_saving);
+            alert(t.err_saving);
         } finally {
-            btn.innerText = window.translations[window.currentLang].btn_save;
+            btn.innerText = t.btn_save;
             btn.disabled = false;
         }
     });
@@ -358,7 +356,9 @@ function resetAndCloseDataModal() {
     currentCroppedDataUrl = null;
     editingBirdId = null;
     
-    document.getElementById('modal-title-bird').innerText = window.translations[window.currentLang].modal_record_title;
+    if(window.translations) {
+        document.getElementById('modal-title-bird').innerText = window.translations[window.currentLang].modal_record_title;
+    }
 }
 
 async function atualizarPinosNoMapa() {
@@ -373,7 +373,7 @@ async function atualizarPinosNoMapa() {
         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
     });
 
-    const t = window.translations[window.currentLang];
+    const t = window.translations ? window.translations[window.currentLang] : { default_bird: "Bird" };
     const querySnapshot = await getDocs(collection(db, "birds"));
     querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -387,7 +387,7 @@ async function atualizarPinosNoMapa() {
 
 async function abrirModalEspecies() {
     const list = document.getElementById('species-list');
-    const t = window.translations[window.currentLang];
+    const t = window.translations ? window.translations[window.currentLang] : { loading: "Loading...", unknown_loc: "Unknown", btn_edit: "Edit", btn_delete: "Delete", no_species: "No species", confirm_delete: "Delete?", modal_edit_title: "Edit Discovery" };
     
     list.innerHTML = t.loading;
     document.getElementById('species-modal').classList.remove('hidden');
@@ -456,7 +456,7 @@ async function abrirModalEspecies() {
 
 async function abrirModalConquistas() {
     const list = document.getElementById('achievements-list');
-    const t = window.translations[window.currentLang];
+    const t = window.translations ? window.translations[window.currentLang] : { loading: "Loading...", no_achievements: "No achievements", completed: "Completed" };
     
     list.innerHTML = t.loading;
     document.getElementById('achievements-modal').classList.remove('hidden');
@@ -498,7 +498,7 @@ async function abrirModalConquistas() {
 
 async function abrirModalPerfil() {
     document.getElementById('profile-modal').classList.remove('hidden');
-    const t = window.translations[window.currentLang];
+    const t = window.translations ? window.translations[window.currentLang] : { chart_label: "Birds per Country" };
     
     const user = auth.currentUser;
     document.getElementById('profile-name').innerText = user.displayName || 'Explorer';
