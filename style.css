@@ -15,7 +15,7 @@ h1, h2, h3, button { font-family: 'Quicksand', sans-serif; font-weight: 700; }
 .app-container { display: flex; width: 100%; height: 100%; }
 
 /* Menu Lateral Retrátil */
-.sidebar { width: 320px; background-color: var(--sidebar-wood); border-right: 2px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; transition: width 0.3s ease; }
+.sidebar { width: 320px; background-color: var(--sidebar-wood); border-right: 2px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; transition: width 0.3s ease; z-index: 10001; }
 .sidebar.collapsed { width: 85px; padding: 25px 10px; }
 .sidebar.collapsed .nav-text { display: none; }
 .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
@@ -47,10 +47,53 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 .lang-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); }
 
 .map-area { flex-grow: 1; position: relative; }
-#map { width: 100%; height: 100%; }
+#map { width: 100%; height: 100%; z-index: 1; }
 
 /* Pino Hand-made do Mapa */
 .clear-pin { background: transparent; border: none; }
+
+/* ========================================================
+   NOVOS CONTROLES LEAFLET (Busca, GPS, Zoom All) 
+   ======================================================== */
+.custom-leaflet-btn {
+    background-color: var(--bg-parchment);
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-dark);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.3em;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    transition: all 0.2s;
+    margin-bottom: 8px; 
+}
+.custom-leaflet-btn:hover {
+    background-color: var(--sidebar-wood);
+    color: var(--accent-green);
+}
+.leaflet-control-geocoder {
+    position: fixed !important;
+    top: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 1000 !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    background-color: var(--bg-parchment) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+.leaflet-control-geocoder-icon {
+    background-color: transparent !important;
+    border-radius: 8px 0 0 8px !important;
+}
+.leaflet-control-geocoder-form input {
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-dark);
+}
 
 /* Menu de Botão Direito (Context Menu) */
 #map-context-menu { position: absolute; z-index: 10000; background: white; border: 2px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); padding: 5px; min-width: 150px; }
@@ -105,7 +148,9 @@ input[type="file"] { display: none; }
 
 @media (max-width: 768px) {
     .app-container { flex-direction: column; }
-    .sidebar { position: absolute; height: 100%; z-index: 9999; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
+    .sidebar { position: absolute; height: 100%; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
     .sidebar.collapsed { width: 75px; padding: 25px 10px; }
     .cozy-panel { width: 95vw; padding: 20px; }
+    /* Ajusta a barra de busca no celular para não bater no menu lateral */
+    .leaflet-control-geocoder { left: calc(50% + 35px) !important; width: 220px !important; }
 }
