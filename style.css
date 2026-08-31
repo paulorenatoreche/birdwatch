@@ -51,7 +51,7 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 .clear-pin { background: transparent; border: none; }
 
 /* ========================================================
-   CONTROLES LEAFLET COZY (Busca, Zoom +/-, GPS, Zoom All) 
+   CONTROLES LEAFLET COZY (Zoom +/-, GPS, Zoom All) 
    ======================================================== */
 .leaflet-bar {
     border: none !important;
@@ -88,105 +88,6 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 
 .custom-leaflet-btn svg {
     stroke: currentColor;
-}
-
-/* Customização da Barra de Pesquisa (Geocoder) */
-.leaflet-control-geocoder {
-    position: fixed !important;
-    top: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 1000 !important;
-    border: 2px solid var(--border-color) !important;
-    border-radius: 8px !important;
-    background-color: var(--bg-parchment) !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-    display: flex;
-    align-items: center;
-}
-
-/* Lupa Cozy */
-.leaflet-control-geocoder-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c4d42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") !important;
-    background-size: 18px !important;
-    background-position: center !important;
-    background-color: transparent !important;
-    background-repeat: no-repeat !important;
-    width: 36px !important;
-    height: 36px !important;
-    border: none !important;
-}
-
-/* Loading Cozy */
-.leaflet-control-geocoder-throbber .leaflet-control-geocoder-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23688a42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3E%3C/svg%3E") !important;
-    animation: cozy-spin 1s linear infinite !important;
-}
-@keyframes cozy-spin { 100% { transform: rotate(360deg); } }
-
-.leaflet-control-geocoder-form input {
-    font-family: 'Nunito', sans-serif !important;
-    color: var(--text-dark) !important;
-    background-color: transparent !important;
-    border: none !important;
-    outline: none !important;
-    height: 36px !important;
-    padding-left: 5px !important;
-}
-
-/* Lista de Resultados da Pesquisa Cozy (Resolvendo Overlaps e Cutoffs) */
-.leaflet-control-geocoder-alternatives {
-    position: absolute !important;
-    top: calc(100% + 5px) !important;
-    left: 0 !important;
-    width: 100% !important;
-    min-width: 250px !important;
-    max-height: 40vh !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important; /* Impede bleed horizontal */
-    background-color: var(--bg-parchment) !important;
-    border: 2px solid var(--border-color) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    z-index: 10001 !important;
-    box-sizing: border-box !important;
-    display: block !important;
-}
-
-/* Zerando regras nativas e forçando quebra de linha de tags a/li do Geocoder */
-.leaflet-control-geocoder-alternatives li,
-.leaflet-control-geocoder-alternatives li a {
-    padding: 8px 10px !important;
-    font-family: 'Nunito', sans-serif !important;
-    color: var(--text-dark) !important;
-    font-size: 0.95em !important;
-    white-space: normal !important; 
-    word-wrap: break-word !important;
-    word-break: break-word !important; 
-    display: block !important;
-    height: auto !important; 
-    min-height: min-content !important;
-    line-height: 1.4 !important;
-    text-decoration: none !important;
-    box-sizing: border-box !important;
-    max-width: 100% !important;
-}
-
-.leaflet-control-geocoder-alternatives li {
-    border-bottom: 1px dashed var(--border-color) !important;
-    transition: background-color 0.2s !important;
-}
-
-.leaflet-control-geocoder-alternatives li:last-child {
-    border-bottom: none !important;
-}
-
-.leaflet-control-geocoder-alternatives li:hover,
-.leaflet-control-geocoder-selected {
-    background-color: var(--sidebar-wood) !important;
-    cursor: pointer !important;
 }
 
 /* ======================================================== */
@@ -258,6 +159,4 @@ input[type="file"] { display: none; }
     .sidebar { position: absolute; height: 100%; z-index: 9999; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
     .sidebar.collapsed { width: 75px; padding: 25px 10px; }
     .cozy-panel { width: 95vw; padding: 20px; }
-    /* Ajusta a barra de busca no celular */
-    .leaflet-control-geocoder { left: calc(50% + 35px) !important; width: 220px !important; }
 }
