@@ -4,43 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BirdWatch Journal</title>
+    
+    <!-- Fontes Cozy -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Mapa, Crop e CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN E PENDENTE -->
     <div id="login-screen" class="overlay-screen">
-        <div class="cozy-panel" style="text-align: center;">
+        <div class="cozy-panel text-center">
             <h1 class="cozy-title">BirdWatch</h1>
             <p>Welcome to your personal bird journal.</p>
-            <br>
-            <button id="google-login-btn" class="cozy-btn">Log in with Google</button>
+            <button id="google-login-btn" class="cozy-btn mt-15">Log in with Google</button>
         </div>
     </div>
-
-    <!-- TELA DE AGUARDANDO APROVAÇÃO -->
     <div id="pending-screen" class="overlay-screen hidden">
-        <div class="cozy-panel" style="text-align: center;">
+        <div class="cozy-panel text-center">
             <h1 class="cozy-title">Awaiting Approval</h1>
-            <p>Your account has been created, but the administrator (Admin) needs to approve your access.</p>
-            <p>Please contact the Admin and check back later.</p>
-            <br>
-            <button id="logout-pending-btn" class="cozy-btn-secondary">Log out</button>
+            <p>Your account needs Admin approval to access the map.</p>
+            <button id="logout-pending-btn" class="cozy-btn-secondary mt-15">Log out</button>
         </div>
     </div>
 
-    <!-- O APP PRINCIPAL (MAPA) -->
+    <!-- APP PRINCIPAL -->
     <div class="app-container hidden" id="main-app">
         <aside class="sidebar">
             <h1 class="cozy-title">BirdWatch</h1>
             <nav>
                 <ul>
-                    <li><button>🌍 Main Map</button></li>
-                    <li><button>🦉 Found Species</button></li>
-                    <li><button>📚 Global Database</button></li>
+                    <li><button id="nav-map">🌍 Main Map</button></li>
+                    <li><button id="nav-species">🦉 Found Species</button></li>
+                    <li><button id="nav-db">📚 Global Database</button></li>
                 </ul>
             </nav>
-            <button id="logout-btn" class="cozy-btn-secondary" style="margin-top:auto;">Logout</button>
+            
+            <div class="gamification-box">
+                <p id="gami-region" class="font-bold">Global Progress</p>
+                <div class="progress-bar"><div id="gami-bar" class="progress-fill" style="width: 0%;"></div></div>
+                <small id="gami-text">Click on a country to see your progress!</small>
+            </div>
+
+            <button id="logout-btn" class="cozy-btn-secondary mt-auto">Logout</button>
         </aside>
 
         <main class="map-area">
@@ -48,17 +56,54 @@
         </main>
     </div>
 
-    <!-- Modal de adicionar pássaro -->
+    <!-- MODAL 1: PREENCHER DADOS -->
     <div id="add-bird-modal" class="modal hidden">
-        <div class="modal-content cozy-panel">
-            <h2>Record a Bird</h2>
-            <input type="text" id="bird-informal-name" placeholder="Bird Name">
+        <div class="modal-content cozy-panel scrollable-panel">
+            <h2>Record a Discovery</h2>
+            
+            <label class="custom-file-upload">
+                <input type="file" id="bird-photo-input" accept="image/*">
+                📷 Select Photo (Max 10MB)
+            </label>
+            <div id="cropped-preview-container" class="hidden">
+                <img id="cropped-preview" src="" alt="Cropped preview">
+            </div>
+
+            <input type="text" id="bird-location" placeholder="Location (Auto-filled on click)">
+            <input type="text" id="bird-date" placeholder="Date & Time (Auto-extracted)">
+            <input type="text" id="bird-equip" placeholder="Equipment (e.g. Binoculars, Nikon)">
+            <input type="text" id="bird-informal-name" placeholder="Informal Name (e.g. Robin)">
+            <input type="text" id="bird-scientific-name" placeholder="Scientific Name (e.g. Erithacus rubecula)">
+            
             <button id="save-bird-btn" class="cozy-btn">Save Discovery</button>
             <button id="close-modal-btn" class="cozy-btn-secondary">Cancel</button>
         </div>
     </div>
 
+    <!-- MODAL 2: CORTAR FOTO -->
+    <div id="crop-modal" class="modal hidden">
+        <div class="modal-content cozy-panel" style="width: 90vw; max-width: 600px;">
+            <h2>Adjust Photo</h2>
+            <div class="cropper-container">
+                <img id="image-to-crop" src="">
+            </div>
+            <button id="confirm-crop-btn" class="cozy-btn mt-15">Confirm Crop</button>
+            <button id="cancel-crop-btn" class="cozy-btn-secondary mt-15">Cancel</button>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ESPÉCIES ENCONTRADAS -->
+    <div id="species-modal" class="modal hidden">
+        <div class="modal-content cozy-panel scrollable-panel" style="width: 80vw; max-width: 800px;">
+            <h2>My Discovered Species</h2>
+            <div id="species-list" class="species-grid"></div>
+            <button id="close-species-btn" class="cozy-btn-secondary mt-15">Close</button>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 </html>
