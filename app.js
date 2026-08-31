@@ -39,9 +39,13 @@ document.getElementById('close-x-welcome').addEventListener('click', closeWelcom
 // ==========================================
 // Lembre-se de colocar aqui o nome exato dos seus arquivos MP3 na pasta music
 const playlist = [
-    "music/track1.mp3",
-    "music/track2.mp3",
-    "music/track3.mp3"
+    "music/ambient01.mp3",
+    "music/ambient02.mp3",
+    "music/ambient03.mp3",
+    "music/ambient04.mp3",
+    "music/ambient05.mp3",
+    "music/ambient06.mp3",
+    "music/ambient07.mp3"
 ];
 
 let currentTrackIndex = 0;
