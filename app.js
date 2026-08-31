@@ -19,6 +19,7 @@ const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
+let profileChartInstance = null;
 
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
@@ -121,6 +122,8 @@ function iniciarMapa() {
     document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
     document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
     document.getElementById('close-achievements-btn').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
+    document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
+    document.getElementById('close-profile-btn').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
     // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
