@@ -8,24 +8,39 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="overlay-screen">
+        <div class="cozy-panel" style="text-align: center;">
+            <h1 class="cozy-title">BirdWatch</h1>
+            <p>Welcome to your personal bird journal.</p>
+            <br>
+            <button id="google-login-btn" class="cozy-btn">Log in with Google</button>
+        </div>
+    </div>
+
+    <!-- TELA DE AGUARDANDO APROVAÇÃO -->
+    <div id="pending-screen" class="overlay-screen hidden">
+        <div class="cozy-panel" style="text-align: center;">
+            <h1 class="cozy-title">Awaiting Approval</h1>
+            <p>Your account has been created, but the administrator (Admin) needs to approve your access.</p>
+            <p>Please contact the Admin and check back later.</p>
+            <br>
+            <button id="logout-pending-btn" class="cozy-btn-secondary">Log out</button>
+        </div>
+    </div>
+
+    <!-- O APP PRINCIPAL (MAPA) -->
+    <div class="app-container hidden" id="main-app">
         <aside class="sidebar">
-            <h1 id="app-title" class="cozy-title">BirdWatch</h1>
+            <h1 class="cozy-title">BirdWatch</h1>
             <nav>
                 <ul>
-                    <li><button id="nav-map">🌍 <span data-i18n="menu_map">Main Map</span></button></li>
-                    <li><button id="nav-species">🦉 <span data-i18n="menu_species">Found Species</span></button></li>
-                    <li><button id="nav-db">📚 <span data-i18n="menu_db">Global Database</span></button></li>
-                    <li><button id="nav-settings">⚙️ <span data-i18n="menu_settings">Settings</span></button></li>
-                    <li><button id="nav-account">👤 <span data-i18n="menu_account">My Account</span></button></li>
+                    <li><button>🌍 Main Map</button></li>
+                    <li><button>🦉 Found Species</button></li>
+                    <li><button>📚 Global Database</button></li>
                 </ul>
             </nav>
-            
-            <div class="gamification-box">
-                <p data-i18n="gami_progress">Regional Progress</p>
-                <div class="progress-bar"><div class="progress-fill" style="width: 5%;"></div></div>
-                <small data-i18n="gami_text">You found 5% of birds here. 20 species left!</small>
-            </div>
+            <button id="logout-btn" class="cozy-btn-secondary" style="margin-top:auto;">Logout</button>
         </aside>
 
         <main class="map-area">
@@ -33,21 +48,17 @@
         </main>
     </div>
 
+    <!-- Modal de adicionar pássaro -->
     <div id="add-bird-modal" class="modal hidden">
         <div class="modal-content cozy-panel">
-            <h2 data-i18n="modal_title">Record a Bird</h2>
-            <input type="file" id="bird-photo" accept="image/*">
-            <input type="text" id="bird-informal-name" placeholder="Bird Name (e.g. Robin)" data-i18n-placeholder="modal_informal">
-            <input type="text" id="bird-scientific-name" placeholder="Scientific Name" data-i18n-placeholder="modal_scientific">
-            <input type="text" id="bird-location" placeholder="Location">
-            <input type="text" id="bird-equipment" placeholder="Equipment used (e.g. Nikon D3500)" data-i18n-placeholder="modal_equip">
-            <button id="save-bird-btn" class="cozy-btn" data-i18n="modal_save">Save Discovery</button>
-            <button id="close-modal-btn" class="cozy-btn-secondary" data-i18n="modal_cancel">Cancel</button>
+            <h2>Record a Bird</h2>
+            <input type="text" id="bird-informal-name" placeholder="Bird Name">
+            <button id="save-bird-btn" class="cozy-btn">Save Discovery</button>
+            <button id="close-modal-btn" class="cozy-btn-secondary">Cancel</button>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="lang.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
