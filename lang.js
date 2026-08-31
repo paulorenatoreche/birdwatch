@@ -2,7 +2,7 @@ window.translations = {
     en: {
         // Welcome & Login
         welcome_title: "Welcome! 🐦‍⬛",
-        welcome_text: "Hello there! Thank you for exploring and showing interest in <b>birdWatch</b>. This is a personal project lovingly crafted for my girlfriend to encourage our outdoor adventures, aiming to support one of her fondest hobbies: <b>birdwatching</b>. I genuinely hope this platform enriches your own birding experiences as well. If you have any suggestions, please feel free to drop me a message. <br> <br> <b>Happy birding!</b>",
+        welcome_text: "Hello there! Thank you for exploring and showing interest in <b>birdWatch</b>. This is a personal project lovingly crafted for my girlfriend to encourage our outdoor adventures, aiming to support one of her fondest hobbies: <b>birdwatching</b>. I genuinely hope this platform enriches your own birding experiences as well. If you have any suggestions, please feel free to drop me a message. <br> This space was made to keep track of the birds she spots, but you can use it for dogs, cats, buildings, monuments or whatever else you feel like logging on your outdoor adventures. <br> <b>Happy birding!</b>",
         welcome_btn: "Got it!",
         login_title: "BirdWatch",
         login_desc: "Welcome to your personal bird journal.",
@@ -73,7 +73,7 @@ window.translations = {
     },
     pt: {
         welcome_title: "Bem-vindo! 🐦‍⬛",
-        welcome_text: "Olá! Obrigado por explorar e demonstrar interesse no <b>birdWatch</b>. Este é um projeto pessoal feito com muito carinho para minha namorada, para incentivar nossas aventuras ao ar livre e apoiar um de seus hobbies favoritos: <b>birdwatching</b> (observação de aves). Espero sinceramente que esta plataforma enriqueça suas próprias experiências também. Se tiver sugestões, fique à vontade para me enviar uma mensagem. <br> <br> <b>Boas observações!</b>",
+        welcome_text: "Olá! Obrigado por explorar e demonstrar interesse no <b>birdWatch</b>. Este é um projeto pessoal feito com muito carinho para minha namorada, para incentivar nossas aventuras ao ar livre e apoiar um de seus hobbies favoritos: <b>birdwatching</b> (observação de aves). Espero sinceramente que esta plataforma enriqueça suas próprias experiências também. Se tiver sugestões, fique à vontade para me enviar uma mensagem. <br> Esse espaço foi criado para registrar os pássaros que ela encontra, mas você pode usar para cachorros, gatos, edifícios, monumentos, o que você preferir registrar em suas aventuras na natureza. <br> <b>Boas observações!</b>",
         welcome_btn: "Entendi!",
         login_title: "BirdWatch",
         login_desc: "Bem-vindo ao seu diário pessoal de aves.",
@@ -136,7 +136,7 @@ window.translations = {
     },
     es: {
         welcome_title: "¡Bienvenido! 🐦‍⬛",
-        welcome_text: "¡Hola! Gracias por explorar y mostrar interés en <b>birdWatch</b>. Este es un proyecto personal creado con mucho cariño para mi novia, para fomentar nuestras aventuras al aire libre y apoyar uno de sus pasatiempos favoritos: <b>birdwatching</b> (observación de aves). Espero sinceramente que esta plataforma también enriquezca tus propias experiencias. Si tienes alguna sugerencia, no dudes en enviarme un mensaje. <br> <br> <b>¡Feliz observación!</b>",
+        welcome_text: "¡Hola! Gracias por explorar y mostrar interés en <b>birdWatch</b>. Este es un proyecto personal creado con mucho cariño para mi novia, para fomentar nuestras aventuras al aire libre y apoyar uno de sus pasatiempos favoritos: <b>birdwatching</b> (observación de aves). Espero sinceramente que esta plataforma también enriquezca tus propias experiencias. Si tienes alguna sugerencia, no dudes en enviarme un mensaje. <br> Este espacio se hizo para anotar los pájaros que ella ve, pero puedes usarlo para perros, gatos, edificios, monumentos o lo que prefieras registrar en tus salidas a la naturaleza. <br> <b>¡Feliz observación!</b>",
         welcome_btn: "¡Entendido!",
         login_title: "BirdWatch",
         login_desc: "Bienvenido a tu diario personal de aves.",
