@@ -157,7 +157,6 @@ const startMusicOnInteraction = () => {
 };
 document.addEventListener('click', startMusicOnInteraction);
 
-// [NOVO] Otimização Mobile: Pausar música se o aplicativo for para o segundo plano
 document.addEventListener("visibilitychange", () => {
     if (L.Browser.mobile) {
         if (document.hidden) {
@@ -246,7 +245,7 @@ function iniciarMapa() {
             btn.title = 'Find my location';
             btn.onclick = (e) => {
                 e.stopPropagation();
-                map.locate({setView: true, maxZoom: 14});
+                map.locate({setView: true, maxZoom: 14, enableHighAccuracy: true});
             };
             return btn;
         }
