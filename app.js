@@ -22,7 +22,7 @@ let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
 let profileChartInstance = null;
 let editingBirdId = null; 
 
-// Lógica do Modal de Boas Vindas
+// Welcome Modal Lógica
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
 }
@@ -35,20 +35,17 @@ document.getElementById('close-welcome-btn').addEventListener('click', closeWelc
 document.getElementById('close-x-welcome').addEventListener('click', closeWelcome);
 
 // ==========================================
-// LÓGICA DA PLAYLIST DE MÚSICA (PIXABAY)
+// LÓGICA DA PLAYLIST E AUTOPLAY 
 // ==========================================
-// Substitua os nomes abaixo pelos nomes reais dos arquivos MP3 que você colocar na pasta 'music'
+// Lembre-se de colocar aqui o nome exato dos seus arquivos MP3 na pasta music
 const playlist = [
-    "music/ambient01.mp3",
-    "music/ambient02.mp3",
-    "music/ambient03.mp3",
-    "music/ambient04.mp3",
-    "music/ambient05.mp3",
-    "music/ambient06.mp3",
-    "music/ambient07.mp3"
+    "music/track1.mp3",
+    "music/track2.mp3",
+    "music/track3.mp3"
 ];
 
 let currentTrackIndex = 0;
+let isMusicPlaying = false;
 const bgMusic = document.getElementById('bg-music');
 const toggleMusicBtn = document.getElementById('toggle-music-btn');
 const iconMusicOn = document.getElementById('icon-music-on');
@@ -59,7 +56,6 @@ function loadTrack(index) {
     bgMusic.load();
 }
 
-// Quando a música acaba, passa para a próxima da pasta
 bgMusic.addEventListener('ended', () => {
     currentTrackIndex++;
     if (currentTrackIndex >= playlist.length) {
@@ -69,22 +65,42 @@ bgMusic.addEventListener('ended', () => {
     bgMusic.play();
 });
 
-toggleMusicBtn.addEventListener('click', () => {
+// Ação de Ligar/Desligar manualmente no Botão
+toggleMusicBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Evita conflitos com o clique global
     if (bgMusic.paused) {
-        // Se a música está vazia (primeiro play), carrega a primeira da lista
         if (!bgMusic.src || bgMusic.src === window.location.href) {
             loadTrack(currentTrackIndex);
         }
         bgMusic.play().then(() => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
-        }).catch(err => console.log("Áudio bloqueado pelo navegador até o usuário interagir."));
+            isMusicPlaying = true;
+        }).catch(err => console.log("Áudio bloqueado.", err));
     } else {
         bgMusic.pause();
         iconMusicOn.classList.add('hidden');
         iconMusicOff.classList.remove('hidden');
+        isMusicPlaying = false;
     }
 });
+
+// Truque para iniciar a música no primeiro clique em qualquer lugar da tela
+const startMusicOnInteraction = () => {
+    if (!isMusicPlaying) {
+        if (!bgMusic.src || bgMusic.src === window.location.href) {
+            loadTrack(currentTrackIndex);
+        }
+        bgMusic.play().then(() => {
+            iconMusicOff.classList.add('hidden');
+            iconMusicOn.classList.remove('hidden');
+            isMusicPlaying = true;
+        }).catch(err => console.log("Aguardando interação para tocar."));
+    }
+    // Remove este evento para não sobrecarregar o site depois da primeira vez
+    document.removeEventListener('click', startMusicOnInteraction);
+};
+document.addEventListener('click', startMusicOnInteraction);
 // ==========================================
 
 const loginScreen = document.getElementById('login-screen');
@@ -170,12 +186,14 @@ function iniciarMapa() {
         });
     }
 
+    // Menus e Modais
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
     document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
     document.getElementById('nav-about').addEventListener('click', () => document.getElementById('welcome-modal').classList.remove('hidden'));
     
+    // Botões originais e X
     document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
     document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
     document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
@@ -188,6 +206,7 @@ function iniciarMapa() {
     document.getElementById('close-x-achievements').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
     document.getElementById('close-x-profile').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
+    // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -215,6 +234,7 @@ function iniciarMapa() {
         document.getElementById('crop-modal').classList.add('hidden');
     });
 
+    // Salvar no BD
     document.getElementById('save-bird-btn').addEventListener('click', async () => {
         const btn = document.getElementById('save-bird-btn');
         btn.innerText = "Saving...";
