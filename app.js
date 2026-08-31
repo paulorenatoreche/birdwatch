@@ -220,8 +220,11 @@ function iniciarRegistro(lat, lng) {
 }
 
 function iniciarMapa() {
-    map = L.map('map').setView([-14.235, -51.925], 4);
+    map = L.map('map', { zoomControl: false }).setView([-14.235, -51.925], 4);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Controle de Zoom padrão reposicionado na esquerda superior
+    L.control.zoom({ position: 'topleft' }).addTo(map);
 
     L.Control.geocoder({
         defaultMarkGeocode: false,
@@ -235,7 +238,7 @@ function iniciarMapa() {
         options: { position: 'topleft' },
         onAdd: function(map) {
             const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
-            btn.innerHTML = '📍';
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`;
             btn.title = 'Find my location';
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -250,7 +253,7 @@ function iniciarMapa() {
         options: { position: 'topleft' },
         onAdd: function(map) {
             const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
-            btn.innerHTML = '🌍';
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
             btn.title = 'Zoom to all discoveries';
             btn.onclick = (e) => {
                 e.stopPropagation();
