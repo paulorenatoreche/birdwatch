@@ -241,12 +241,39 @@ function iniciarMapa() {
         options: { position: 'topleft' },
         onAdd: function(map) {
             const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
-            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`;
+            
+            // SVG Original do GPS
+            const originalSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`;
+            // SVG de Loading
+            const loadingSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: cozy-spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
+            
+            btn.innerHTML = originalSVG;
             btn.title = 'Find my location';
+            
             btn.onclick = (e) => {
                 e.stopPropagation();
-                map.locate({setView: true, maxZoom: 14, enableHighAccuracy: true});
+                btn.innerHTML = loadingSVG; 
+                
+                map.locate({
+                    setView: true, 
+                    maxZoom: 14, 
+                    enableHighAccuracy: true,
+                    timeout: 10000, 
+                    maximumAge: 0
+                });
             };
+
+            map.on('locationfound', () => {
+                btn.innerHTML = originalSVG; 
+            });
+
+            map.on('locationerror', (err) => {
+                btn.innerHTML = originalSVG; 
+                const t = window.translations ? window.translations[window.currentLang] : {};
+                alert((t && t.gps_error) ? t.gps_error : "Please check your GPS permissions.");
+                console.log("GPS Error: ", err.message);
+            });
+
             return btn;
         }
     });
