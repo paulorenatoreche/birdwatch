@@ -84,7 +84,7 @@ window.translations = {
         
         menu_species: "Espécies Encontradas",
         menu_achievements: "Conquistas",
-        menu_db: "Banco de Dados Global",
+        menu_db: "Dados Globais",
         menu_profile: "Meu Perfil",
         menu_about: "Sobre o projeto",
         menu_logout: "Sair",
@@ -147,7 +147,7 @@ window.translations = {
         
         menu_species: "Especies Encontradas",
         menu_achievements: "Logros",
-        menu_db: "Datos Global",
+        menu_db: "Datos Globales",
         menu_profile: "Mi Perfil",
         menu_about: "Sobre el proyecto",
         menu_logout: "Cerrar sesión",
