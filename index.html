@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     
-    <!-- Atualizado para v1.16 -->
-    <link rel="stylesheet" href="style.css?v=1.16">
+    <!-- Atualizado para v1.18 -->
+    <link rel="stylesheet" href="style.css?v=1.18">
 </head>
 <body>
     <audio id="bg-music"></audio>
@@ -78,7 +78,17 @@
                     <li><button id="nav-about">🐦‍⬛ <span class="nav-text" data-i18n="menu_about">About it</span></button></li>
                 </ul>
             </nav>
-            <button id="logout-btn" class="cozy-btn-secondary mt-auto">🚪 <span class="nav-text" data-i18n="menu_logout">Logout</span></button>
+            
+            <div class="bottom-actions">
+                <button id="suggestions-btn" class="bottom-btn" style="border-style: dashed;">
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <span class="nav-text" data-i18n="menu_suggestions">Suggestions</span>
+                </button>
+                <button id="logout-btn" class="bottom-btn">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text" data-i18n="menu_logout">Logout</span>
+                </button>
+            </div>
             
             <div class="sidebar-footer">
                 <span class="nav-text"><span data-i18n="footer_music">Music by</span> <a href="https://pixabay.com" target="_blank">Pixabay</a></span>
@@ -197,8 +207,8 @@
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Atualizado para v1.16 -->
-    <script src="lang.js?v=1.16"></script>
-    <script type="module" src="app.js?v=1.16"></script>
+    <!-- Atualizado para v1.18 -->
+    <script src="lang.js?v=1.18"></script>
+    <script type="module" src="app.js?v=1.18"></script>
 </body>
 </html>
