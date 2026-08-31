@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     
-    <link rel="stylesheet" href="style.css?v=1.4">
+    <link rel="stylesheet" href="style.css?v=1.5">
 </head>
 <body>
     <audio id="bg-music"></audio>
@@ -108,9 +108,16 @@
             <div id="cropped-preview-container" class="hidden">
                 <img id="cropped-preview" src="" alt="Cropped preview">
             </div>
+            
             <input type="text" id="bird-location" data-i18n-placeholder="ph_location" placeholder="Location (Auto-filled)">
-            <input type="text" id="bird-date" data-i18n-placeholder="ph_date" placeholder="Date & Time (Auto-extracted)">
-            <input type="text" id="bird-equip" data-i18n-placeholder="ph_equip" placeholder="Equipment (e.g. Binoculars, Nikon)">
+            
+            <!-- Campo de data atualizado para calendário -->
+            <input type="date" id="bird-date" data-i18n-placeholder="ph_date">
+            
+            <!-- Datalist para autocomplete dos equipamentos -->
+            <input type="text" id="bird-equip" list="equip-list" data-i18n-placeholder="ph_equip" placeholder="Equipment (e.g. Binoculars, Nikon)">
+            <datalist id="equip-list"></datalist>
+
             <input type="text" id="bird-informal-name" data-i18n-placeholder="ph_informal" placeholder="Informal Name (e.g. Robin)">
             <input type="text" id="bird-scientific-name" data-i18n-placeholder="ph_scientific" placeholder="Scientific Name">
             
@@ -191,8 +198,7 @@
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- ARQUIVOS DO PROJETO COM VERSÃO 1.6 -->
-    <script src="lang.js?v=1.4"></script>
-    <script type="module" src="app.js?v=1.6"></script>
+    <script src="lang.js?v=1.5"></script>
+    <script type="module" src="app.js?v=1.5"></script>
 </body>
 </html>
