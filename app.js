@@ -22,7 +22,6 @@ let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
 let profileChartInstance = null;
 let editingBirdId = null; 
 
-// Welcome Modal Lógica (Executada ao abrir a página)
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
 }
@@ -117,14 +116,12 @@ function iniciarMapa() {
         });
     }
 
-    // Menus e Modais
     document.getElementById('nav-db').addEventListener('click', () => window.open('https://avibase.bsc-eoc.org/', '_blank'));
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
     document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
     document.getElementById('nav-about').addEventListener('click', () => document.getElementById('welcome-modal').classList.remove('hidden'));
     
-    // Botões originais e X
     document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
     document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
     document.getElementById('close-species-btn').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
@@ -137,7 +134,6 @@ function iniciarMapa() {
     document.getElementById('close-x-achievements').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
     document.getElementById('close-x-profile').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
-    // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -165,7 +161,6 @@ function iniciarMapa() {
         document.getElementById('crop-modal').classList.add('hidden');
     });
 
-    // Salvar no BD
     document.getElementById('save-bird-btn').addEventListener('click', async () => {
         const btn = document.getElementById('save-bird-btn');
         btn.innerText = "Saving...";
@@ -174,7 +169,6 @@ function iniciarMapa() {
         try {
             let photoUrl = "";
             
-            // Se está editando e não fez upload de nova foto, mantém a antiga
             if (editingBirdId && !currentCroppedDataUrl) {
                 photoUrl = window.userBirdsData[editingBirdId].photoUrl;
             } else if (currentCroppedDataUrl) {
@@ -204,7 +198,7 @@ function iniciarMapa() {
             }
 
             resetAndCloseDataModal();
-            atualizarPinosNoMapa(); // Refresh do mapa imediato
+            atualizarPinosNoMapa();
         } catch (error) {
             console.error(error);
             alert("Error saving data.");
@@ -230,7 +224,6 @@ function resetAndCloseDataModal() {
 }
 
 async function atualizarPinosNoMapa() {
-    // Limpa todos os pinos atuais antes de redesenhar
     map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
             layer.remove();
@@ -260,7 +253,7 @@ async function abrirModalEspecies() {
 
     const querySnapshot = await getDocs(collection(db, "birds"));
     list.innerHTML = "";
-    window.userBirdsData = {}; // Guarda dados em memória para edição
+    window.userBirdsData = {};
 
     querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -285,19 +278,17 @@ async function abrirModalEspecies() {
     if (list.innerHTML === "") {
         list.innerHTML = "<p>No species found yet. Start exploring!</p>";
     } else {
-        // Conecta as funções de Excluir
         document.querySelectorAll('.delete-bird-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 if(confirm("Are you sure you want to delete this discovery?")) {
                     const id = e.target.getAttribute('data-id');
                     await deleteDoc(doc(db, "birds", id));
-                    abrirModalEspecies(); // Recarrega a lista
-                    atualizarPinosNoMapa(); // Limpa e atualiza o mapa
+                    abrirModalEspecies();
+                    atualizarPinosNoMapa();
                 }
             });
         });
 
-        // Conecta as funções de Editar
         document.querySelectorAll('.edit-bird-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = e.target.getAttribute('data-id');
