@@ -101,3 +101,25 @@ input[type="file"] { display: none; }
 .stat-value { font-size: 2.5em; font-family: 'Quicksand', sans-serif; font-weight: 700; color: var(--accent-green); line-height: 1; margin-bottom: 5px; }
 .stat-label { font-size: 0.85em; font-weight: bold; color: var(--text-dark); text-transform: uppercase; letter-spacing: 1px; }
 .chart-container { width: 100%; height: 250px; background: white; border: 2px solid var(--border-color); border-radius: 12px; padding: 15px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
+/* Botão X no topo dos Modais */
+.cozy-panel {
+    position: relative; /* Garante que o X fique preso ao canto do painel */
+}
+
+.close-x-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 10;
+    line-height: 1;
+}
+
+.close-x-btn:hover {
+    color: var(--accent-green);
+}
