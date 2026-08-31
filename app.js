@@ -470,7 +470,6 @@ async function atualizarPinosNoMapa() {
               .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`)
               .addTo(window.markerGroup);
 
-            // Adiciona registros antigos à fila de processamento em background (Beta Users)
             if ((data.country === 'Brasil' || data.country === 'Brazil') && !data.state) {
                 missingStateDocs.push({ id: docSnap.id, lat: data.lat, lng: data.lng });
             }
@@ -487,7 +486,6 @@ async function atualizarPinosNoMapa() {
         });
     }
 
-    // Processamento silencioso em background para corrigir os registros sem Estado dos usuários Beta
     if (missingStateDocs.length > 0) {
         (async () => {
             for (const item of missingStateDocs) {
@@ -496,7 +494,7 @@ async function atualizarPinosNoMapa() {
                     const revData = await res.json();
                     const state = revData.address.state || "Estado Desconhecido";
                     await updateDoc(doc(db, "birds", item.id), { state: state });
-                    await new Promise(r => setTimeout(r, 1100)); // Limite de 1 req/seg da API Nominatim
+                    await new Promise(r => setTimeout(r, 1100)); 
                 } catch(e) {
                     console.error("Erro na atualização de background", e);
                 }
@@ -589,7 +587,6 @@ async function abrirModalConquistas() {
         const data = doc.data();
         if (data.userId === auth.currentUser.uid && data.country) {
             let regionKey = data.country;
-            // Valida se é Brasil e cria a chave estadual
             if (regionKey === 'Brasil' || regionKey === 'Brazil') {
                 regionKey = data.state ? `Brasil - ${data.state}` : `Brasil (Processando...)`;
             }
@@ -603,7 +600,10 @@ async function abrirModalConquistas() {
         return;
     }
 
-    for (const [country, count] of Object.entries(countryCounts)) {
+    // NOVO: Ordenar alfabeticamente ignorando acentos (A-Z)
+    const sortedAchievements = Object.entries(countryCounts).sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: 'base' }));
+
+    for (const [country, count] of sortedAchievements) {
         const progress = Math.min(count, 10);
         const percentage = (progress / 10) * 100;
         const status = progress >= 10 ? `✅ ${t.completed}` : `${progress}/10`;
