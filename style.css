@@ -35,6 +35,29 @@ nav button { width: 100%; background: none; border: none; text-align: left; font
 nav button:hover { background-color: rgba(255,255,255,0.6); }
 .sidebar.collapsed nav button { justify-content: center; font-size: 1.5em; }
 
+/* Ações Inferiores (Sugestões e Logout) */
+.bottom-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: auto; }
+.bottom-btn {
+    width: 100%;
+    background-color: transparent;
+    border: 2px solid var(--text-dark);
+    text-align: left;
+    font-size: 1.2em;
+    padding: 12px;
+    color: var(--text-dark);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.2s;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
+}
+.bottom-btn:hover { background-color: rgba(92, 77, 66, 0.05); transform: translateY(-1px); }
+.sidebar.collapsed .bottom-btn { justify-content: center; padding: 12px 0; }
+.sidebar.collapsed .bottom-btn .nav-icon { font-size: 1.2em; margin: 0; }
+
 /* Rodapé e Seletor de Idiomas */
 .sidebar-footer { text-align: center; margin-top: 15px; font-size: 0.85em; color: var(--text-dark); opacity: 0.8; display: flex; flex-direction: column; gap: 10px; }
 .sidebar-footer a { color: var(--accent-green); text-decoration: none; font-weight: bold; }
