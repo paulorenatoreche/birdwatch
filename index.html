@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirdWatch Journal</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <h1 id="app-title" class="cozy-title">BirdWatch</h1>
+            <nav>
+                <ul>
+                    <li><button id="nav-map">🌍 <span data-i18n="menu_map">Main Map</span></button></li>
+                    <li><button id="nav-species">🦉 <span data-i18n="menu_species">Found Species</span></button></li>
+                    <li><button id="nav-db">📚 <span data-i18n="menu_db">Global Database</span></button></li>
+                    <li><button id="nav-settings">⚙️ <span data-i18n="menu_settings">Settings</span></button></li>
+                    <li><button id="nav-account">👤 <span data-i18n="menu_account">My Account</span></button></li>
+                </ul>
+            </nav>
+            
+            <div class="gamification-box">
+                <p data-i18n="gami_progress">Regional Progress</p>
+                <div class="progress-bar"><div class="progress-fill" style="width: 5%;"></div></div>
+                <small data-i18n="gami_text">You found 5% of birds here. 20 species left!</small>
+            </div>
+        </aside>
+
+        <main class="map-area">
+            <div id="map"></div>
+        </main>
+    </div>
+
+    <div id="add-bird-modal" class="modal hidden">
+        <div class="modal-content cozy-panel">
+            <h2 data-i18n="modal_title">Record a Bird</h2>
+            <input type="file" id="bird-photo" accept="image/*">
+            <input type="text" id="bird-informal-name" placeholder="Bird Name (e.g. Robin)" data-i18n-placeholder="modal_informal">
+            <input type="text" id="bird-scientific-name" placeholder="Scientific Name" data-i18n-placeholder="modal_scientific">
+            <input type="text" id="bird-location" placeholder="Location">
+            <input type="text" id="bird-equipment" placeholder="Equipment used (e.g. Nikon D3500)" data-i18n-placeholder="modal_equip">
+            <button id="save-bird-btn" class="cozy-btn" data-i18n="modal_save">Save Discovery</button>
+            <button id="close-modal-btn" class="cozy-btn-secondary" data-i18n="modal_cancel">Cancel</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="lang.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
