@@ -22,6 +22,7 @@ let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
 let profileChartInstance = null;
 let editingBirdId = null; 
 
+// Lógica do Modal de Boas Vindas
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
 }
@@ -32,6 +33,59 @@ const closeWelcome = () => {
 };
 document.getElementById('close-welcome-btn').addEventListener('click', closeWelcome);
 document.getElementById('close-x-welcome').addEventListener('click', closeWelcome);
+
+// ==========================================
+// LÓGICA DA PLAYLIST DE MÚSICA (PIXABAY)
+// ==========================================
+// Substitua os nomes abaixo pelos nomes reais dos arquivos MP3 que você colocar na pasta 'music'
+const playlist = [
+    "music/ambient01.mp3",
+    "music/ambient02.mp3",
+    "music/ambient03.mp3",
+    "music/ambient04.mp3",
+    "music/ambient05.mp3",
+    "music/ambient06.mp3",
+    "music/ambient07.mp3"
+];
+
+let currentTrackIndex = 0;
+const bgMusic = document.getElementById('bg-music');
+const toggleMusicBtn = document.getElementById('toggle-music-btn');
+const iconMusicOn = document.getElementById('icon-music-on');
+const iconMusicOff = document.getElementById('icon-music-off');
+
+function loadTrack(index) {
+    bgMusic.src = playlist[index];
+    bgMusic.load();
+}
+
+// Quando a música acaba, passa para a próxima da pasta
+bgMusic.addEventListener('ended', () => {
+    currentTrackIndex++;
+    if (currentTrackIndex >= playlist.length) {
+        currentTrackIndex = 0;
+    }
+    loadTrack(currentTrackIndex);
+    bgMusic.play();
+});
+
+toggleMusicBtn.addEventListener('click', () => {
+    if (bgMusic.paused) {
+        // Se a música está vazia (primeiro play), carrega a primeira da lista
+        if (!bgMusic.src || bgMusic.src === window.location.href) {
+            loadTrack(currentTrackIndex);
+        }
+        bgMusic.play().then(() => {
+            iconMusicOff.classList.add('hidden');
+            iconMusicOn.classList.remove('hidden');
+        }).catch(err => console.log("Áudio bloqueado pelo navegador até o usuário interagir."));
+    } else {
+        bgMusic.pause();
+        iconMusicOn.classList.add('hidden');
+        iconMusicOff.classList.remove('hidden');
+    }
+});
+// ==========================================
 
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
