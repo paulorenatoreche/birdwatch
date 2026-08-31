@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- WELCOME MODAL -->
+    <div id="welcome-modal" class="overlay-screen hidden">
+        <div class="cozy-panel text-center" style="max-width: 500px; padding: 45px;">
+            <h2 class="cozy-title" style="border: none; margin-bottom: 10px;">Welcome! 🌿</h2>
+            <p style="line-height: 1.6; text-align: justify; font-size: 1.05em;">
+                Hello there! Thank you for exploring and showing interest in birdWatch. This is a personal project lovingly crafted for my girlfriend to chronicle our park strolls and outdoor adventures, aiming to support one of her fondest hobbies—birdwatching. I genuinely hope this platform enriches your own birding experiences as well. Should you have any suggestions, please feel free to drop me a message. Happy birding!
+            </p>
+            <button id="close-welcome-btn" class="cozy-btn mt-15" style="width: 100%;">Got it!</button>
+        </div>
+    </div>
+
     <div id="login-screen" class="overlay-screen">
         <div class="cozy-panel text-center">
             <h1 class="cozy-title">BirdWatch</h1>
@@ -28,7 +39,6 @@
 
     <!-- APP PRINCIPAL -->
     <div class="app-container hidden" id="main-app">
-        <!-- Menu Lateral Retrátil -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1 class="cozy-title"><span class="nav-text">BirdWatch</span></h1>
@@ -47,7 +57,6 @@
 
         <main class="map-area">
             <div id="map"></div>
-            <!-- Menu do Botão Direito -->
             <div id="map-context-menu" class="hidden">
                 <button id="add-record-btn">➕ Add a record</button>
             </div>
@@ -58,7 +67,7 @@
     <div id="add-bird-modal" class="modal hidden">
         <div class="modal-content cozy-panel scrollable-panel">
             <button id="close-x-add" class="close-x-btn">&times;</button>
-            <h2>Record a Discovery</h2>
+            <h2 id="modal-title-bird">Record a Discovery</h2>
             <label class="custom-file-upload">
                 <input type="file" id="bird-photo-input" accept="image/*">
                 📷 Select Photo (Max 10MB)
