@@ -116,7 +116,9 @@ function loadTrack(index) {
 
 bgMusic.addEventListener('ended', () => {
     currentTrackIndex++;
-    if (currentTrackIndex >= playlist.length) currentTrackIndex = 0;
+    if (currentTrackIndex >= playlist.length) {
+        currentTrackIndex = 0;
+    }
     loadTrack(currentTrackIndex);
     bgMusic.play();
 });
@@ -124,7 +126,9 @@ bgMusic.addEventListener('ended', () => {
 toggleMusicBtn.addEventListener('click', (e) => {
     e.stopPropagation(); 
     if (bgMusic.paused) {
-        if (!bgMusic.src || bgMusic.src === window.location.href) loadTrack(currentTrackIndex);
+        if (!bgMusic.src || bgMusic.src === window.location.href) {
+            loadTrack(currentTrackIndex);
+        }
         bgMusic.play().then(() => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
@@ -140,7 +144,9 @@ toggleMusicBtn.addEventListener('click', (e) => {
 
 const startMusicOnInteraction = () => {
     if (!isMusicPlaying) {
-        if (!bgMusic.src || bgMusic.src === window.location.href) loadTrack(currentTrackIndex);
+        if (!bgMusic.src || bgMusic.src === window.location.href) {
+            loadTrack(currentTrackIndex);
+        }
         bgMusic.play().then(() => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
@@ -217,6 +223,48 @@ function iniciarMapa() {
     map = L.map('map').setView([-14.235, -51.925], 4);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
+    // [NOVO] Adiciona o Controle de Busca (Geocoder)
+    L.Control.geocoder({
+        defaultMarkGeocode: false,
+        placeholder: "Search for a place..."
+    }).on('markgeocode', function(e) {
+        map.fitBounds(e.geocode.bbox);
+    }).addTo(map);
+
+    // [NOVO] Controle para Localizar o Usuário (GPS)
+    L.Control.LocateMe = L.Control.extend({
+        options: { position: 'topright' },
+        onAdd: function(map) {
+            const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
+            btn.innerHTML = '📍';
+            btn.title = 'Find my location';
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                map.locate({setView: true, maxZoom: 14});
+            };
+            return btn;
+        }
+    });
+    map.addControl(new L.Control.LocateMe());
+
+    // [NOVO] Controle para Zoom All (Todos os Pinos)
+    L.Control.ZoomAll = L.Control.extend({
+        options: { position: 'topright' },
+        onAdd: function(map) {
+            const btn = L.DomUtil.create('button', 'custom-leaflet-btn');
+            btn.innerHTML = '🌍';
+            btn.title = 'Zoom to all discoveries';
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                if (window.markerGroup && window.markerGroup.getLayers().length > 0) {
+                    map.fitBounds(window.markerGroup.getBounds(), { padding: [50, 50] });
+                }
+            };
+            return btn;
+        }
+    });
+    map.addControl(new L.Control.ZoomAll());
+
     atualizarPinosNoMapa();
 
     let contextLat, contextLng;
@@ -268,7 +316,6 @@ function iniciarMapa() {
 
         exifr.parse(file).then(exif => {
             if (exif && exif.DateTimeOriginal) {
-                // Converte Data do Metadado para YYYY-MM-DD
                 const d = new Date(exif.DateTimeOriginal);
                 const year = d.getFullYear();
                 const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -363,13 +410,13 @@ function resetAndCloseDataModal() {
 }
 
 async function atualizarPinosNoMapa() {
-    map.eachLayer((layer) => {
-        if (layer instanceof L.Marker) {
-            layer.remove();
-        }
-    });
+    // [NOVO] O sistema agora armazena os pinos em um Grupo para conseguir dar o Zoom All
+    if (!window.markerGroup) {
+        window.markerGroup = L.featureGroup().addTo(map);
+    } else {
+        window.markerGroup.clearLayers();
+    }
 
-    // Construção do SVG Hand-Made Vetorial do Mapa
     const cozyPin = L.divIcon({
         className: 'clear-pin',
         html: `<svg width="34" height="34" viewBox="0 0 24 24" fill="#688a42" stroke="#5c4d42" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.25));"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3.5" fill="#f9f6f0"/></svg>`,
@@ -387,13 +434,13 @@ async function atualizarPinosNoMapa() {
         if (data.userId === auth.currentUser.uid) {
             if (data.equipment) equipSet.add(data.equipment);
             
+            // Agora adiciona os pinos dentro do Grupo (markerGroup)
             L.marker([data.lat, data.lng], {icon: cozyPin})
-              .addTo(map)
-              .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`);
+              .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`)
+              .addTo(window.markerGroup);
         }
     });
 
-    // Popula Datalist de Equipamentos
     const equipDatalist = document.getElementById('equip-list');
     if(equipDatalist) {
         equipDatalist.innerHTML = '';
