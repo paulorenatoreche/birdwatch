@@ -26,10 +26,13 @@ let editingBirdId = null;
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
 }
-document.getElementById('close-welcome-btn').addEventListener('click', () => {
+
+const closeWelcome = () => {
     localStorage.setItem('birdwatch_welcome', 'true');
     document.getElementById('welcome-modal').classList.add('hidden');
-});
+};
+document.getElementById('close-welcome-btn').addEventListener('click', closeWelcome);
+document.getElementById('close-x-welcome').addEventListener('click', closeWelcome);
 
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
@@ -119,6 +122,7 @@ function iniciarMapa() {
     document.getElementById('nav-species').addEventListener('click', abrirModalEspecies);
     document.getElementById('nav-achievements').addEventListener('click', abrirModalConquistas);
     document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
+    document.getElementById('nav-about').addEventListener('click', () => document.getElementById('welcome-modal').classList.remove('hidden'));
     
     // Botões originais e X
     document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
