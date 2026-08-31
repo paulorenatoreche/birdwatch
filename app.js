@@ -4,7 +4,7 @@ import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteD
 import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
 // ==========================================
-// 1. VARIÁVEIS GLOBAIS (No topo para evitar erros de Referência)
+// 1. VARIÁVEIS GLOBAIS
 // ==========================================
 let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry;
 let profileChartInstance = null;
@@ -52,10 +52,7 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', (e) => applyLanguage(e.target.getAttribute('data-lang')));
 });
 
-// Timeout rápido para garantir que o lang.js foi carregado no HTML antes de aplicar
-setTimeout(() => {
-    applyLanguage(window.currentLang);
-}, 100);
+setTimeout(() => { applyLanguage(window.currentLang); }, 100);
 
 // ==========================================
 // 3. CONFIGURAÇÃO DO FIREBASE
@@ -116,9 +113,7 @@ function loadTrack(index) {
 
 bgMusic.addEventListener('ended', () => {
     currentTrackIndex++;
-    if (currentTrackIndex >= playlist.length) {
-        currentTrackIndex = 0;
-    }
+    if (currentTrackIndex >= playlist.length) currentTrackIndex = 0;
     loadTrack(currentTrackIndex);
     bgMusic.play();
 });
@@ -126,9 +121,7 @@ bgMusic.addEventListener('ended', () => {
 toggleMusicBtn.addEventListener('click', (e) => {
     e.stopPropagation(); 
     if (bgMusic.paused) {
-        if (!bgMusic.src || bgMusic.src === window.location.href) {
-            loadTrack(currentTrackIndex);
-        }
+        if (!bgMusic.src || bgMusic.src === window.location.href) loadTrack(currentTrackIndex);
         bgMusic.play().then(() => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
@@ -144,9 +137,7 @@ toggleMusicBtn.addEventListener('click', (e) => {
 
 const startMusicOnInteraction = () => {
     if (!isMusicPlaying) {
-        if (!bgMusic.src || bgMusic.src === window.location.href) {
-            loadTrack(currentTrackIndex);
-        }
+        if (!bgMusic.src || bgMusic.src === window.location.href) loadTrack(currentTrackIndex);
         bgMusic.play().then(() => {
             iconMusicOff.classList.add('hidden');
             iconMusicOn.classList.remove('hidden');
@@ -273,7 +264,14 @@ function iniciarMapa() {
         if (file.size > 10 * 1024 * 1024) return alert(t.err_large_file);
 
         exifr.parse(file).then(exif => {
-            if (exif && exif.DateTimeOriginal) document.getElementById('bird-date').value = exif.DateTimeOriginal.toLocaleString();
+            if (exif && exif.DateTimeOriginal) {
+                // Converte Data do Metadado para YYYY-MM-DD
+                const d = new Date(exif.DateTimeOriginal);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                document.getElementById('bird-date').value = `${year}-${month}-${day}`;
+            }
         }).catch(() => console.log("No EXIF data found."));
 
         const reader = new FileReader();
@@ -368,21 +366,40 @@ async function atualizarPinosNoMapa() {
         }
     });
 
-    const greenIcon = new L.Icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+    // Construção do SVG Hand-Made Vetorial do Mapa
+    const cozyPin = L.divIcon({
+        className: 'clear-pin',
+        html: `<svg width="34" height="34" viewBox="0 0 24 24" fill="#688a42" stroke="#5c4d42" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.25));"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3.5" fill="#f9f6f0"/></svg>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34],
+        popupAnchor: [0, -34]
     });
 
     const t = window.translations ? window.translations[window.currentLang] : { default_bird: "Bird" };
     const querySnapshot = await getDocs(collection(db, "birds"));
+    const equipSet = new Set();
+
     querySnapshot.forEach((doc) => {
         const data = doc.data();
         if (data.userId === auth.currentUser.uid) {
-            L.marker([data.lat, data.lng], {icon: greenIcon})
+            if (data.equipment) equipSet.add(data.equipment);
+            
+            L.marker([data.lat, data.lng], {icon: cozyPin})
               .addTo(map)
               .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`);
         }
     });
+
+    // Popula Datalist de Equipamentos
+    const equipDatalist = document.getElementById('equip-list');
+    if(equipDatalist) {
+        equipDatalist.innerHTML = '';
+        equipSet.forEach(equip => {
+            const option = document.createElement('option');
+            option.value = equip;
+            equipDatalist.appendChild(option);
+        });
+    }
 }
 
 async function abrirModalEspecies() {
