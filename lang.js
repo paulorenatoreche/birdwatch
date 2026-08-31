@@ -147,7 +147,7 @@ window.translations = {
         
         menu_species: "Especies Encontradas",
         menu_achievements: "Logros",
-        menu_db: "Base de Datos Global",
+        menu_db: "Datos Global",
         menu_profile: "Mi Perfil",
         menu_about: "Sobre el proyecto",
         menu_logout: "Cerrar sesión",
