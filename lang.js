@@ -1,5 +1,6 @@
 window.translations = {
     en: {
+        // Welcome & Login
         welcome_title: "Welcome! 🐦‍⬛",
         welcome_text: "Hello there! Thank you for exploring and showing interest in <b>birdWatch</b>. This is a personal project lovingly crafted for my girlfriend to encourage our outdoor adventures, aiming to support one of her fondest hobbies: <b>birdwatching</b>. I genuinely hope this platform enriches your own birding experiences as well. If you have any suggestions, please feel free to drop me a message. <br> <br> <b>Happy birding!</b>",
         welcome_btn: "Got it!",
@@ -10,6 +11,7 @@ window.translations = {
         pending_desc: "Your account needs Admin approval to access the map.",
         logout_pending_btn: "Log out",
         
+        // Sidebar
         menu_species: "Found Species",
         menu_achievements: "Achievements",
         menu_db: "Global Database",
@@ -18,8 +20,10 @@ window.translations = {
         menu_logout: "Logout",
         footer_music: "Music by",
 
+        // Context Menu
         add_record_btn: "➕ Add a record",
 
+        // Modals - Record
         modal_record_title: "Record a Discovery",
         modal_edit_title: "Edit Discovery",
         photo_btn: "Select Photo (Max 10MB)",
@@ -32,24 +36,29 @@ window.translations = {
         btn_saving: "Saving...",
         btn_cancel: "Cancel",
 
+        // Modals - Crop
         modal_crop_title: "Adjust Photo",
         btn_confirm_crop: "Confirm Crop",
 
+        // Modals - Species
         modal_species_title: "My Discovered Species",
         btn_close: "Close",
         btn_edit: "✏️ Edit",
         btn_delete: "🗑️ Delete",
         
+        // Modals - Achievements
         modal_achievements_title: "My Achievements 🏆",
-        achievements_desc: "Register 10 species to complete a country!",
+        achievements_desc: "Register 10 species to complete a country (or a Brazilian State)!",
         completed: "Completed",
 
+        // Modals - Profile
         modal_profile_title: "Your Explorer Stats",
         stat_total: "Total Birds",
-        stat_countries: "Countries Explored",
+        stat_countries: "Regions Explored",
         stat_conquered: "Conquered (10+)",
-        chart_label: "Birds per Country",
+        chart_label: "Birds per Region",
 
+        // Dynamic JS Messages
         loading_loc: "Loading location...",
         loading: "Loading...",
         unknown_loc: "Unknown Location",
@@ -105,14 +114,14 @@ window.translations = {
         btn_delete: "🗑️ Deletar",
         
         modal_achievements_title: "Minhas Conquistas 🏆",
-        achievements_desc: "Registre 10 espécies para completar um país!",
+        achievements_desc: "Registre 10 espécies para completar um país ou estado brasileiro!",
         completed: "Concluído",
 
         modal_profile_title: "Suas Estatísticas",
         stat_total: "Total de Aves",
-        stat_countries: "Países Explorados",
+        stat_countries: "Regiões Exploradas",
         stat_conquered: "Conquistados (10+)",
-        chart_label: "Aves por País",
+        chart_label: "Aves por Região",
 
         loading_loc: "Carregando localização...",
         loading: "Carregando...",
@@ -169,14 +178,14 @@ window.translations = {
         btn_delete: "🗑️ Eliminar",
         
         modal_achievements_title: "Mis Logros 🏆",
-        achievements_desc: "¡Registra 10 especies para completar un país!",
+        achievements_desc: "¡Registra 10 especies para completar un país o estado brasileño!",
         completed: "Completado",
 
         modal_profile_title: "Tus Estadísticas",
         stat_total: "Total de Aves",
-        stat_countries: "Países Explorados",
+        stat_countries: "Regiones Exploradas",
         stat_conquered: "Conquistados (10+)",
-        chart_label: "Aves por País",
+        chart_label: "Aves por Región",
 
         loading_loc: "Cargando ubicación...",
         loading: "Cargando...",
