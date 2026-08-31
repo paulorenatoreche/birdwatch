@@ -181,6 +181,11 @@ document.getElementById('google-login-btn').addEventListener('click', () => sign
 document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 document.getElementById('logout-pending-btn').addEventListener('click', () => signOut(auth));
 
+// Link para a sua Caixa de Sugestões Pessoal
+document.getElementById('suggestions-btn').addEventListener('click', () => {
+    window.location.href = "mailto:paulo.renato.reche@gmail.com?subject=birdWatch%20Suggestions";
+});
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userRef = doc(db, "users", user.uid);
@@ -600,7 +605,6 @@ async function abrirModalConquistas() {
         return;
     }
 
-    // NOVO: Ordenar alfabeticamente ignorando acentos (A-Z)
     const sortedAchievements = Object.entries(countryCounts).sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: 'base' }));
 
     for (const [country, count] of sortedAchievements) {
