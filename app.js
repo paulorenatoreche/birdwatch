@@ -125,6 +125,13 @@ function iniciarMapa() {
     document.getElementById('nav-profile').addEventListener('click', abrirModalPerfil);
     document.getElementById('close-profile-btn').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
 
+    // Novos botões X do topo
+    document.getElementById('close-x-add').addEventListener('click', resetAndCloseDataModal);
+    document.getElementById('close-x-crop').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
+    document.getElementById('close-x-species').addEventListener('click', () => document.getElementById('species-modal').classList.add('hidden'));
+    document.getElementById('close-x-achievements').addEventListener('click', () => document.getElementById('achievements-modal').classList.add('hidden'));
+    document.getElementById('close-x-profile').addEventListener('click', () => document.getElementById('profile-modal').classList.add('hidden'));
+
     // Lógica de Foto
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
         const file = e.target.files[0];
