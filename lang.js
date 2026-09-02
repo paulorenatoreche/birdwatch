@@ -83,7 +83,7 @@ window.translations = {
         pending_desc: "Sua conta precisa da aprovação do Admin para acessar o mapa.",
         logout_pending_btn: "Sair",
         
-        menu_species: "Álbum",
+        menu_species: "Meu álbum",
         menu_achievements: "Conquistas",
         menu_profile: "Perfil",
         menu_about: "Sobre o projeto",
