@@ -40,6 +40,19 @@ function getShortCountryName(countryName) {
     return countryName;
 }
 
+// Gerador de Imagem Placeholder Genérica em SVG
+function getDefaultPhoto(text) {
+    const safeText = text || 'No Photo';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+        <rect width="400" height="400" fill="#f1ebd9"/>
+        <path d="M140 160h120v90h-120z" fill="none" stroke="#d8cdba" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="200" cy="205" r="20" fill="none" stroke="#d8cdba" stroke-width="8"/>
+        <path d="M175 160l10-15h30l10 15" fill="none" stroke="#d8cdba" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+        <text x="200" y="295" font-family="Nunito, sans-serif" font-size="22" fill="#a89d8d" text-anchor="middle" font-weight="bold">${safeText}</text>
+    </svg>`;
+    return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+}
+
 // ==========================================
 // 2. LÓGICA DE IDIOMAS E TRANSLATIONS (I18N)
 // ==========================================
@@ -156,7 +169,6 @@ function fadeAudio(audio, direction, duration = 1200) {
     return new Promise(resolve => {
         clearInterval(audioFadeInterval);
         
-        // Desvio limpo e imediato para iOS/Mobile (que bloqueia o volume programático)[cite: 5, 9]
         if (L.Browser.mobile || L.Browser.safari || /iPad|iPhone|iPod/.test(navigator.userAgent)) {
             if (direction === 'in') {
                 audio.play().then(resolve).catch(() => resolve());
@@ -201,7 +213,7 @@ bgMusic.addEventListener('ended', () => {
     fadeAudio(bgMusic, 'in'); 
 });
 
-toggleMusicBtn.addEventListener('click', async (e) => {
+const handleMusicToggle = async (e) => {
     e.stopPropagation(); 
     e.preventDefault();
     if (!isMusicPlaying) {
@@ -216,7 +228,10 @@ toggleMusicBtn.addEventListener('click', async (e) => {
         isMusicPlaying = false;
         fadeAudio(bgMusic, 'out');
     }
-});
+};
+
+toggleMusicBtn.addEventListener('click', handleMusicToggle);
+toggleMusicBtn.addEventListener('touchstart', (e) => { e.stopPropagation(); }, {passive: true});
 
 const startMusicOnInteraction = () => {
     if (!isMusicPlaying) {
@@ -445,7 +460,7 @@ function iniciarMapa() {
         try {
             let photoUrl = "";
             if (editingBirdId && !currentCroppedDataUrl) {
-                photoUrl = window.userBirdsData[editingBirdId].photoUrl;
+                photoUrl = window.userBirdsData[editingBirdId].photoUrl || "";
             } else if (currentCroppedDataUrl) {
                 const photoRef = ref(storage, `birds/${auth.currentUser.uid}_${Date.now()}.jpg`);
                 await uploadString(photoRef, currentCroppedDataUrl, 'data_url');
@@ -509,7 +524,7 @@ async function atualizarPinosNoMapa() {
         iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -34]
     });
 
-    const t = window.translations ? window.translations[window.currentLang] : { default_bird: "Bird" };
+    const t = window.translations ? window.translations[window.currentLang] : { default_bird: "Bird", no_photo: "No Photo" };
     const querySnapshot = await getDocs(collection(db, "birds"));
     const equipSet = new Set();
     const missingStateDocs = [];
@@ -519,8 +534,10 @@ async function atualizarPinosNoMapa() {
         if (data.userId === auth.currentUser.uid) {
             if (data.equipment) equipSet.add(data.equipment);
             
+            const photoSrc = data.photoUrl ? data.photoUrl : getDefaultPhoto(t.no_photo);
+
             L.marker([data.lat, data.lng], {icon: cozyPin})
-              .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${data.photoUrl}" style="width:100px; border-radius:5px;">`)
+              .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${photoSrc}" style="width:100px; border-radius:5px;">`)
               .addTo(window.markerGroup);
 
             const isBr = getShortCountryName(data.country) === 'Brasil' || getShortCountryName(data.country) === 'Brazil';
@@ -575,7 +592,7 @@ async function abrirModalEspecies() {
 
 function renderSpeciesList() {
     const list = document.getElementById('species-list');
-    const t = window.translations ? window.translations[window.currentLang] : { unknown_loc: "Unknown", btn_edit: "Edit", btn_delete: "Delete", btn_zoom: "Zoom to", no_species: "No species", confirm_delete: "Delete?", modal_edit_title: "Edit Discovery" };
+    const t = window.translations ? window.translations[window.currentLang] : { unknown_loc: "Unknown", btn_edit: "Edit", btn_delete: "Delete", btn_zoom: "Zoom to", no_species: "No species", confirm_delete: "Delete?", modal_edit_title: "Edit Discovery", no_photo: "No Photo" };
     
     list.innerHTML = "";
     const searchVal = document.getElementById('search-species').value.toLowerCase();
@@ -589,9 +606,11 @@ function renderSpeciesList() {
         if (filterCountry !== 'all' && shortC !== filterCountry) return;
         if (searchVal && !(data.informalName || "").toLowerCase().includes(searchVal) && !(data.scientificName || "").toLowerCase().includes(searchVal)) return;
 
+        const photoSrc = data.photoUrl ? data.photoUrl : getDefaultPhoto(t.no_photo);
+
         list.innerHTML += `
             <div class="species-card">
-                <img src="${data.photoUrl || ''}" alt="Bird" class="species-img-enlarge">
+                <img src="${photoSrc}" alt="Bird" class="species-img-enlarge">
                 <h3>${data.informalName || t.unknown_loc}</h3>
                 <p><i>${data.scientificName || '-'}</i></p>
                 <p>📍 ${data.location}</p>
