@@ -9,8 +9,8 @@ window.translations = {
         pending_title: "Awaiting Approval",
         pending_desc: "Your account needs Admin approval to access the map.",
         logout_pending_btn: "Log out",
-
-        menu_species: "Found Species",
+        
+        menu_species: "Scrapbook",
         menu_achievements: "Achievements",
         menu_profile: "My Profile",
         menu_about: "About it",
@@ -36,14 +36,14 @@ window.translations = {
         modal_crop_title: "Adjust Photo",
         btn_confirm_crop: "Confirm Crop",
 
-        modal_species_title: "My Discovered Species",
+        modal_species_title: "My Scrapbook",
         btn_close: "Close",
         btn_edit: "✏️ Edit",
         btn_delete: "🗑️ Delete",
         btn_zoom: "🎯 Zoom to",
         filter_all: "All countries",
         search_placeholder: "Search by name...",
-
+        
         modal_achievements_title: "My Achievements 🏆",
         achievements_desc: "Register species in different regions to conquer achievements!",
         completed: "Completed",
@@ -78,8 +78,8 @@ window.translations = {
         pending_title: "Aguardando Aprovação",
         pending_desc: "Sua conta precisa da aprovação do Admin para acessar o mapa.",
         logout_pending_btn: "Sair",
-
-        menu_species: "Espécies Encontradas",
+        
+        menu_species: "Scrapbook",
         menu_achievements: "Conquistas",
         menu_profile: "Meu Perfil",
         menu_about: "Sobre o projeto",
@@ -105,14 +105,14 @@ window.translations = {
         modal_crop_title: "Ajustar Foto",
         btn_confirm_crop: "Confirmar Corte",
 
-        modal_species_title: "Minhas Espécies Descobertas",
+        modal_species_title: "Meu Scrapbook",
         btn_close: "Fechar",
         btn_edit: "✏️ Editar",
         btn_delete: "🗑️ Deletar",
         btn_zoom: "🎯 Ir para",
         filter_all: "Todos os países",
         search_placeholder: "Buscar por nome...",
-
+        
         modal_achievements_title: "Minhas Conquistas 🏆",
         achievements_desc: "Registre espécies nas regiões para desbloquear conquistas!",
         completed: "Concluído",
@@ -147,8 +147,8 @@ window.translations = {
         pending_title: "Esperando Aprobación",
         pending_desc: "Tu cuenta necesita la aprobación del Administrador para acceder al mapa.",
         logout_pending_btn: "Cerrar sesión",
-
-        menu_species: "Especies Encontradas",
+        
+        menu_species: "Scrapbook",
         menu_achievements: "Logros",
         menu_profile: "Mi Perfil",
         menu_about: "Sobre el proyecto",
@@ -174,14 +174,14 @@ window.translations = {
         modal_crop_title: "Ajustar Foto",
         btn_confirm_crop: "Confirmar Recorte",
 
-        modal_species_title: "Mis Especies Descubiertas",
+        modal_species_title: "Mi Scrapbook",
         btn_close: "Cerrar",
         btn_edit: "✏️ Editar",
         btn_delete: "🗑️ Eliminar",
         btn_zoom: "🎯 Ir a",
         filter_all: "Todos los países",
         search_placeholder: "Buscar por nombre...",
-
+        
         modal_achievements_title: "Mis Logros 🏆",
         achievements_desc: "¡Registra especies en las regiones para desbloquear logros!",
         completed: "Completado",
