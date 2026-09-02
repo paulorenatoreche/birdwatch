@@ -9,7 +9,7 @@ window.translations = {
         pending_title: "Awaiting Approval",
         pending_desc: "Your account needs Admin approval to access the map.",
         logout_pending_btn: "Log out",
-        
+
         menu_species: "Found Species",
         menu_achievements: "Achievements",
         menu_profile: "My Profile",
@@ -31,6 +31,7 @@ window.translations = {
         btn_save: "Save Discovery",
         btn_saving: "Saving...",
         btn_cancel: "Cancel",
+        btn_update_loc: "📍 Update Location",
 
         modal_crop_title: "Adjust Photo",
         btn_confirm_crop: "Confirm Crop",
@@ -39,9 +40,12 @@ window.translations = {
         btn_close: "Close",
         btn_edit: "✏️ Edit",
         btn_delete: "🗑️ Delete",
-        
+        btn_zoom: "🎯 Zoom to",
+        filter_all: "All countries",
+        search_placeholder: "Search by name...",
+
         modal_achievements_title: "My Achievements 🏆",
-        achievements_desc: "Register 10 species to complete a country (or a Brazilian State)!",
+        achievements_desc: "Register species in different regions to conquer achievements!",
         completed: "Completed",
 
         modal_profile_title: "Your Explorer Stats",
@@ -61,7 +65,8 @@ window.translations = {
         err_large_file: "File is larger than 10MB!",
         err_saving: "Error saving data.",
         alert_blocked_audio: "Waiting for user interaction to play music.",
-        gps_error: "Could not access GPS. Please check if your browser has Location permissions enabled in your device settings."
+        gps_error: "Could not access GPS. Please check if your browser has Location permissions enabled in your device settings.",
+        click_map_loc: "Click anywhere on the map to set a new location."
     },
     pt: {
         welcome_title: "Bem-vindo! 🐦‍⬛",
@@ -73,7 +78,7 @@ window.translations = {
         pending_title: "Aguardando Aprovação",
         pending_desc: "Sua conta precisa da aprovação do Admin para acessar o mapa.",
         logout_pending_btn: "Sair",
-        
+
         menu_species: "Espécies Encontradas",
         menu_achievements: "Conquistas",
         menu_profile: "Meu Perfil",
@@ -95,6 +100,7 @@ window.translations = {
         btn_save: "Salvar Descoberta",
         btn_saving: "Salvando...",
         btn_cancel: "Cancelar",
+        btn_update_loc: "📍 Atualizar Localização",
 
         modal_crop_title: "Ajustar Foto",
         btn_confirm_crop: "Confirmar Corte",
@@ -103,9 +109,12 @@ window.translations = {
         btn_close: "Fechar",
         btn_edit: "✏️ Editar",
         btn_delete: "🗑️ Deletar",
-        
+        btn_zoom: "🎯 Ir para",
+        filter_all: "Todos os países",
+        search_placeholder: "Buscar por nome...",
+
         modal_achievements_title: "Minhas Conquistas 🏆",
-        achievements_desc: "Registre 10 espécies para completar um país ou estado brasileiro!",
+        achievements_desc: "Registre espécies nas regiões para desbloquear conquistas!",
         completed: "Concluído",
 
         modal_profile_title: "Suas Estatísticas",
@@ -125,7 +134,8 @@ window.translations = {
         err_large_file: "O arquivo é maior que 10MB!",
         err_saving: "Erro ao salvar os dados.",
         alert_blocked_audio: "Aguardando interação do usuário para tocar música.",
-        gps_error: "Não foi possível acessar o GPS. Verifique nos Ajustes do celular se o seu navegador tem permissão de Localização."
+        gps_error: "Não foi possível acessar o GPS. Verifique nos Ajustes do celular se o seu navegador tem permissão de Localização.",
+        click_map_loc: "Clique em qualquer lugar do mapa para definir a nova localização."
     },
     es: {
         welcome_title: "¡Bienvenido! 🐦‍⬛",
@@ -137,7 +147,7 @@ window.translations = {
         pending_title: "Esperando Aprobación",
         pending_desc: "Tu cuenta necesita la aprobación del Administrador para acceder al mapa.",
         logout_pending_btn: "Cerrar sesión",
-        
+
         menu_species: "Especies Encontradas",
         menu_achievements: "Logros",
         menu_profile: "Mi Perfil",
@@ -159,6 +169,7 @@ window.translations = {
         btn_save: "Guardar Descubrimiento",
         btn_saving: "Guardando...",
         btn_cancel: "Cancelar",
+        btn_update_loc: "📍 Actualizar Ubicación",
 
         modal_crop_title: "Ajustar Foto",
         btn_confirm_crop: "Confirmar Recorte",
@@ -167,9 +178,12 @@ window.translations = {
         btn_close: "Cerrar",
         btn_edit: "✏️ Editar",
         btn_delete: "🗑️ Eliminar",
-        
+        btn_zoom: "🎯 Ir a",
+        filter_all: "Todos los países",
+        search_placeholder: "Buscar por nombre...",
+
         modal_achievements_title: "Mis Logros 🏆",
-        achievements_desc: "¡Registra 10 especies para completar un país o estado brasileño!",
+        achievements_desc: "¡Registra especies en las regiones para desbloquear logros!",
         completed: "Completado",
 
         modal_profile_title: "Tus Estadísticas",
@@ -189,6 +203,7 @@ window.translations = {
         err_large_file: "¡El archivo es mayor de 10MB!",
         err_saving: "Error al guardar los datos.",
         alert_blocked_audio: "Esperando interacción del usuario para reproducir música.",
-        gps_error: "No se pudo acceder al GPS. Verifique en la configuración de su dispositivo si su navegador tiene permisos de Ubicación."
+        gps_error: "No se pudo acceder al GPS. Verifique en la configuración de su dispositivo si su navegador tiene permisos de Ubicación.",
+        click_map_loc: "Haz clic en cualquier lugar del mapa para establecer una nueva ubicación."
     }
 };
