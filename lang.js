@@ -79,7 +79,7 @@ window.translations = {
         pending_desc: "Sua conta precisa da aprovação do Admin para acessar o mapa.",
         logout_pending_btn: "Sair",
         
-        menu_species: "Scrapbook",
+        menu_species: "Álbum",
         menu_achievements: "Conquistas",
         menu_profile: "Meu Perfil",
         menu_about: "Sobre o projeto",
@@ -105,7 +105,7 @@ window.translations = {
         modal_crop_title: "Ajustar Foto",
         btn_confirm_crop: "Confirmar Corte",
 
-        modal_species_title: "Meu Scrapbook",
+        modal_species_title: "Meu Álbum",
         btn_close: "Fechar",
         btn_edit: "✏️ Editar",
         btn_delete: "🗑️ Deletar",
@@ -148,7 +148,7 @@ window.translations = {
         pending_desc: "Tu cuenta necesita la aprobación del Administrador para acceder al mapa.",
         logout_pending_btn: "Cerrar sesión",
         
-        menu_species: "Scrapbook",
+        menu_species: "Álbum",
         menu_achievements: "Logros",
         menu_profile: "Mi Perfil",
         menu_about: "Sobre el proyecto",
@@ -174,7 +174,7 @@ window.translations = {
         modal_crop_title: "Ajustar Foto",
         btn_confirm_crop: "Confirmar Recorte",
 
-        modal_species_title: "Mi Scrapbook",
+        modal_species_title: "Mi Álbum",
         btn_close: "Cerrar",
         btn_edit: "✏️ Editar",
         btn_delete: "🗑️ Eliminar",
