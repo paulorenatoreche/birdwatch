@@ -155,7 +155,20 @@ const iconMusicOff = document.getElementById('icon-music-off');
 function fadeAudio(audio, direction, duration = 1200) {
     return new Promise(resolve => {
         clearInterval(audioFadeInterval);
+        
+        // Desvio limpo e imediato para iOS/Mobile (que bloqueia o volume programático)[cite: 5, 9]
+        if (L.Browser.mobile || L.Browser.safari || /iPad|iPhone|iPod/.test(navigator.userAgent)) {
+            if (direction === 'in') {
+                audio.play().then(resolve).catch(() => resolve());
+            } else {
+                audio.pause();
+                resolve();
+            }
+            return;
+        }
+
         let step = 50 / duration; 
+        let virtualVol = direction === 'in' ? 0 : audio.volume;
         
         if (direction === 'in') {
             audio.volume = 0;
@@ -163,12 +176,15 @@ function fadeAudio(audio, direction, duration = 1200) {
         }
         
         audioFadeInterval = setInterval(() => {
-            if (direction === 'in') {
-                if (audio.volume < Math.max(0, 1 - step)) audio.volume += step;
-                else { audio.volume = 1; clearInterval(audioFadeInterval); resolve(); }
+            virtualVol = direction === 'in' ? virtualVol + step : virtualVol - step;
+            
+            if ((direction === 'in' && virtualVol >= 1) || (direction === 'out' && virtualVol <= 0)) {
+                clearInterval(audioFadeInterval);
+                if (direction === 'out') audio.pause();
+                audio.volume = direction === 'in' ? 1 : 0;
+                resolve();
             } else {
-                if (audio.volume > step) audio.volume -= step;
-                else { audio.volume = 0; clearInterval(audioFadeInterval); audio.pause(); resolve(); }
+                audio.volume = virtualVol;
             }
         }, 50);
     });
@@ -185,8 +201,9 @@ bgMusic.addEventListener('ended', () => {
     fadeAudio(bgMusic, 'in'); 
 });
 
-const handleMusicToggle = async (e) => {
+toggleMusicBtn.addEventListener('click', async (e) => {
     e.stopPropagation(); 
+    e.preventDefault();
     if (!isMusicPlaying) {
         iconMusicOff.classList.add('hidden');
         iconMusicOn.classList.remove('hidden');
@@ -199,11 +216,7 @@ const handleMusicToggle = async (e) => {
         isMusicPlaying = false;
         fadeAudio(bgMusic, 'out');
     }
-};
-
-toggleMusicBtn.addEventListener('click', handleMusicToggle);
-// Blinda a dupla ativação e o bloqueio em celulares
-toggleMusicBtn.addEventListener('touchstart', (e) => { e.stopPropagation(); }, {passive: true});
+});
 
 const startMusicOnInteraction = () => {
     if (!isMusicPlaying) {
