@@ -210,7 +210,6 @@ const contextMenu = document.getElementById('map-context-menu');
 document.getElementById('toggle-sidebar-btn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('collapsed'));
 
 if (isViewerMode) {
-    // Modo de Leitura/Visitante
     loginScreen.classList.add('hidden');
     pendingScreen.classList.add('hidden');
     mainApp.classList.remove('hidden');
@@ -218,7 +217,6 @@ if (isViewerMode) {
     document.getElementById('owner-menu').classList.add('hidden');
     document.getElementById('viewer-menu').classList.remove('hidden');
 
-    // Busca o nome do dono do mapa
     const userRef = doc(db, "users", viewerId);
     getDoc(userRef).then(userSnap => {
         if (userSnap.exists()) {
@@ -231,7 +229,6 @@ if (isViewerMode) {
 
     iniciarMapa();
 } else {
-    // Fluxo Normal do Dono
     document.getElementById('owner-menu').classList.remove('hidden');
     document.getElementById('viewer-menu').classList.add('hidden');
 
@@ -246,7 +243,6 @@ if (isViewerMode) {
     document.getElementById('logout-pending-btn').addEventListener('click', () => signOut(auth));
     document.getElementById('suggestions-btn').addEventListener('click', () => { window.location.href = "mailto:paulo.renato.reche@gmail.com?subject=birdWatch%20Suggestions"; });
 
-    // Link de Compartilhamento
     document.getElementById('share-btn').addEventListener('click', () => {
         if (auth.currentUser) {
             const url = window.location.origin + window.location.pathname + '?viewer=' + auth.currentUser.uid;
@@ -276,7 +272,6 @@ if (isViewerMode) {
     });
 }
 
-// Menus para ambas as visualizações
 document.getElementById('nav-species').addEventListener('click', () => { closeAllModals(); abrirModalEspecies(); });
 document.getElementById('nav-achievements').addEventListener('click', () => { closeAllModals(); abrirModalConquistas(); });
 document.getElementById('nav-profile').addEventListener('click', () => { closeAllModals(); abrirModalPerfil(); });
@@ -632,7 +627,7 @@ async function abrirModalPerfil() {
     
     if (isViewerMode) {
         document.getElementById('profile-name').innerText = window.viewerName || 'Explorer';
-        document.getElementById('profile-email').innerText = ''; // Esconde email no modo público
+        document.getElementById('profile-email').innerText = ''; 
     } else {
         const user = auth.currentUser;
         document.getElementById('profile-name').innerText = user.displayName || 'Explorer';
