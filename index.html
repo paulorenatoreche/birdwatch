@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     
-    <link rel="stylesheet" href="style.css?v=1.5">
+    <link rel="stylesheet" href="style.css?v=2.0">
 </head>
 <body>
     <audio id="bg-music"></audio>
@@ -68,24 +68,50 @@
                     </button>
                 </div>
             </div>
-            <nav>
-                <ul>
-                    <li><button id="nav-species">📔 <span class="nav-text" data-i18n="menu_species">Scrapbook</span></button></li>
-                    <li><button id="nav-achievements">🏆 <span class="nav-text" data-i18n="menu_achievements">Achievements</span></button></li>
-                    <li><button id="nav-profile">👤 <span class="nav-text" data-i18n="menu_profile">My Profile</span></button></li>
-                    <li><button id="nav-about">🐦‍⬛ <span class="nav-text" data-i18n="menu_about">About it</span></button></li>
-                </ul>
-            </nav>
-            
-            <div class="bottom-actions">
-                <button id="suggestions-btn" class="bottom-btn" style="border-style: dashed;">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                    <span class="nav-text" data-i18n="menu_suggestions">Suggestions</span>
-                </button>
-                <button id="logout-btn" class="bottom-btn">
-                    <span class="nav-icon">🚪</span>
-                    <span class="nav-text" data-i18n="menu_logout">Logout</span>
-                </button>
+
+            <!-- MENU DO PROPRIETÁRIO -->
+            <div id="owner-menu" class="hidden" style="display:flex; flex-direction:column; flex-grow:1;">
+                <nav>
+                    <ul>
+                        <li><button id="nav-species">📔 <span class="nav-text" data-i18n="menu_species">Scrapbook</span></button></li>
+                        <li><button id="nav-achievements">🏆 <span class="nav-text" data-i18n="menu_achievements">Achievements</span></button></li>
+                        <li><button id="nav-profile">👤 <span class="nav-text" data-i18n="menu_profile">My Profile</span></button></li>
+                        <li><button id="nav-about">🐦‍⬛ <span class="nav-text" data-i18n="menu_about">About it</span></button></li>
+                    </ul>
+                </nav>
+                <div class="bottom-actions">
+                    <button id="share-btn" class="bottom-btn" style="border-style: dashed; border-color: var(--accent-green); color: var(--accent-green);">
+                        <span class="nav-icon" style="margin-left: 2px;">🔗</span>
+                        <span class="nav-text" data-i18n="menu_share">Share My Journey</span>
+                    </button>
+                    <button id="suggestions-btn" class="bottom-btn" style="border-style: dashed;">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <span class="nav-text" data-i18n="menu_suggestions">Suggestions</span>
+                    </button>
+                    <button id="logout-btn" class="bottom-btn">
+                        <span class="nav-icon">🚪</span>
+                        <span class="nav-text" data-i18n="menu_logout">Logout</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MENU DO VISITANTE (SHARE) -->
+            <div id="viewer-menu" class="hidden" style="display:flex; flex-direction:column; flex-grow:1;">
+                <hr class="viewer-divider">
+                <h3 id="viewer-name-title" class="cozy-title viewer-title">birdWatch</h3>
+                <nav>
+                    <ul>
+                        <li><button id="nav-species-viewer">📔 <span class="nav-text" data-i18n="menu_species">Scrapbook</span></button></li>
+                        <li><button id="nav-achievements-viewer">🏆 <span class="nav-text" data-i18n="menu_achievements">Achievements</span></button></li>
+                        <li><button id="nav-about-viewer">🐦‍⬛ <span class="nav-text" data-i18n="menu_about">About it</span></button></li>
+                    </ul>
+                </nav>
+                <div class="bottom-actions">
+                    <button id="cta-create-btn" class="bottom-btn" style="background-color: var(--accent-green); color: white; border: none; justify-content: center;">
+                        <span class="nav-icon" style="margin:0;">✨</span>
+                        <span class="nav-text" data-i18n="menu_cta_create">Create your own!</span>
+                    </button>
+                </div>
             </div>
             
             <div class="sidebar-footer">
@@ -104,7 +130,6 @@
                 <button id="add-record-btn" data-i18n="add_record_btn">➕ Add a record</button>
             </div>
 
-            <!-- MODAIS DENTRO DO MAP-AREA PARA AUTO-CENTRALIZAR -->
             <div id="add-bird-modal" class="modal hidden">
                 <div class="modal-content cozy-panel scrollable-panel">
                     <button id="close-x-add" class="close-x-btn">&times;</button>
@@ -185,7 +210,7 @@
                         <p id="profile-email">email@example.com</p>
                     </div>
                     
-                    <h3 class="mt-15 text-center" data-i18n="modal_profile_title">Your Explorer Stats</h3>
+                    <h3 class="mt-15 text-center" data-i18n="modal_profile_title">Explorer Stats</h3>
                     <div class="stats-grid mt-15">
                         <div class="stat-card">
                             <div class="stat-value" id="stat-total-birds">0</div>
@@ -217,7 +242,7 @@
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <script src="lang.js?v=1.5"></script>
-    <script type="module" src="app.js?v=1.5"></script>
+    <script src="lang.js?v=2.0"></script>
+    <script type="module" src="app.js?v=2.0"></script>
 </body>
 </html>
