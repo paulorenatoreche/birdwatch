@@ -14,16 +14,14 @@ h1, h2, h3, button { font-family: 'Quicksand', sans-serif; font-weight: 700; }
 
 .app-container { display: flex; width: 100%; height: 100%; }
 
-/* Menu Lateral Retrátil */
 .sidebar { width: 320px; background-color: var(--sidebar-wood); border-right: 2px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; transition: width 0.3s ease; z-index: 10001; }
 .sidebar.collapsed { width: 85px; padding: 25px 10px; }
 .sidebar.collapsed .nav-text { display: none; }
-.sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; }
 .sidebar.collapsed .sidebar-header { flex-direction: column; }
 .cozy-title { font-size: 2.2em; color: var(--accent-green); margin: 0; }
 .sidebar.collapsed .cozy-title { font-size: 1.2em; margin-bottom: 15px; }
 
-/* Ícones de Ação (Som e Recolher) */
 .header-actions { display: flex; gap: 10px; align-items: center; }
 .sidebar.collapsed .header-actions { flex-direction: column; gap: 15px; }
 .header-actions button { background: none; border: none; cursor: pointer; color: var(--text-dark); transition: color 0.3s, transform 0.3s; display: flex; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; }
@@ -35,30 +33,12 @@ nav button { width: 100%; background: none; border: none; text-align: left; font
 nav button:hover { background-color: rgba(255,255,255,0.6); }
 .sidebar.collapsed nav button { justify-content: center; font-size: 1.5em; }
 
-/* Ações Inferiores (Sugestões e Logout) */
 .bottom-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: auto; }
-.bottom-btn {
-    width: 100%;
-    background-color: transparent;
-    border: 2px solid var(--text-dark);
-    text-align: left;
-    font-size: 1.2em;
-    padding: 12px;
-    color: var(--text-dark);
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background 0.2s, transform 0.2s;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    font-weight: bold;
-    font-family: 'Quicksand', sans-serif;
-}
+.bottom-btn { width: 100%; background-color: transparent; border: 2px solid var(--text-dark); text-align: left; font-size: 1.2em; padding: 12px; color: var(--text-dark); cursor: pointer; border-radius: 8px; transition: background 0.2s, transform 0.2s; display: flex; gap: 10px; align-items: center; font-weight: bold; font-family: 'Quicksand', sans-serif; }
 .bottom-btn:hover { background-color: rgba(92, 77, 66, 0.05); transform: translateY(-1px); }
 .sidebar.collapsed .bottom-btn { justify-content: center; padding: 12px 0; }
 .sidebar.collapsed .bottom-btn .nav-icon { font-size: 1.2em; margin: 0; }
 
-/* Rodapé e Seletor de Idiomas */
 .sidebar-footer { text-align: center; margin-top: 15px; font-size: 0.85em; color: var(--text-dark); opacity: 0.8; display: flex; flex-direction: column; gap: 10px; }
 .sidebar-footer a { color: var(--accent-green); text-decoration: none; font-weight: bold; }
 .sidebar-footer a:hover { text-decoration: underline; }
@@ -73,9 +53,6 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 #map { width: 100%; height: 100%; z-index: 1; }
 .clear-pin { background: transparent; border: none; }
 
-/* ========================================================
-   CONTROLES LEAFLET COZY (Zoom +/-, GPS, Zoom All) 
-   ======================================================== */
 .leaflet-bar { border: none !important; box-shadow: none !important; }
 .leaflet-top .leaflet-control { margin-bottom: 8px !important; }
 
@@ -84,14 +61,10 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 .custom-leaflet-btn svg { stroke: currentColor; }
 @keyframes cozy-spin { 100% { transform: rotate(360deg); } }
 
-/* ======================================================== */
-
-/* Menu de Botão Direito (Context Menu) */
 #map-context-menu { position: absolute; z-index: 10000; background: white; border: 2px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); padding: 5px; min-width: 150px; }
 #map-context-menu button { width: 100%; background: none; border: none; padding: 10px; text-align: left; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 1.1em; border-radius: 5px; }
 #map-context-menu button:hover { background: var(--bg-parchment); color: var(--accent-green); }
 
-/* Modais e Paineis */
 .overlay-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(249, 246, 240, 0.95); display: flex; justify-content: center; align-items: center; z-index: 20000; }
 .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center; z-index: 10000; cursor: pointer; }
 .modal-content { cursor: default; }
@@ -100,7 +73,6 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 .cozy-panel { position: relative; background-color: var(--bg-parchment); padding: 35px; border-radius: 16px; width: 450px; border: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
 .scrollable-panel { max-height: 90vh; overflow-y: auto; }
 
-/* Inputs e Selects */
 .cozy-panel input, .cozy-panel input[type="date"], .cozy-panel select { padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1em; background-color: #fff; font-family: 'Nunito', sans-serif !important; color: var(--text-dark); }
 .cozy-panel input:disabled { background-color: #f1ebd9; color: #887a6d; cursor: not-allowed; }
 
@@ -108,7 +80,6 @@ nav button:hover { background-color: rgba(255,255,255,0.6); }
 .cozy-btn:hover { background-color: var(--accent-green-hover); transform: translateY(-1px); }
 .cozy-btn-secondary { background-color: transparent; color: var(--text-dark); border: 2px solid var(--text-dark); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-/* Botão X no topo dos Modais */
 .close-x-btn { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: transparent; border: none; font-size: 2em; font-weight: 300; color: var(--text-dark); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s ease; z-index: 10; line-height: 0; opacity: 0.5; }
 .close-x-btn:hover { opacity: 1; background-color: rgba(0, 0, 0, 0.08); color: var(--accent-green); }
 
@@ -127,12 +98,10 @@ input[type="file"] { display: none; }
 .species-card img:hover { transform: scale(1.02); }
 .species-card h3 { color: var(--accent-green); margin-bottom: 5px; }
 
-/* Ações de Editar e Deletar */
 .card-actions { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px; margin-top: auto; border-top: 1px dashed var(--border-color); padding-top: 12px; }
 .card-action-btn { background: none; border: none; cursor: pointer; font-size: 0.9em; font-family: 'Nunito', sans-serif; color: var(--text-dark); transition: color 0.2s; display: flex; gap: 5px; align-items: center; }
 .card-action-btn:hover { color: var(--accent-green); font-weight: bold; }
 
-/* Conquistas e Perfil */
 .achievement-card { background: white; border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-top: 15px; }
 .achievement-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; }
 .progress-bar { width: 100%; height: 12px; background-color: #d1c8b8; border-radius: 6px; overflow: hidden; position: relative; }
@@ -152,8 +121,11 @@ input[type="file"] { display: none; }
     .sidebar.collapsed { width: 75px; padding: 25px 10px; }
     .cozy-panel { width: 95vw; padding: 20px; }
     .leaflet-left { left: 75px !important; transition: left 0.3s ease; }
-
-    /* Ajuste do Scrapbook (Filtros) para mobile */
     .species-filters { flex-direction: column; gap: 12px; }
     .species-filters input, .species-filters select { width: 100%; }
 }
+
+/* Modo Visualizador CSS */
+.viewer-divider { border: 1px dashed var(--border-color); margin: 5px 0 15px 0; }
+.viewer-title { font-size: 1.2em; text-align: center; margin-bottom: 15px; border: none; padding: 0; color: var(--accent-green); }
+.sidebar.collapsed .viewer-title, .sidebar.collapsed .viewer-divider { display: none; }
