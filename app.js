@@ -4,12 +4,21 @@ import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteD
 import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
 // ==========================================
-// 1. VARIÁVEIS GLOBAIS E FUNÇÕES ÚTEIS
+// 1. VARIÁVEIS GLOBAIS E MODO VIEWER
 // ==========================================
 let map, cropper, currentCroppedDataUrl, currentLat, currentLng, currentCountry, currentState;
 let profileChartInstance = null;
 let editingBirdId = null; 
 window.userBirdsData = {}; 
+
+const urlParams = new URLSearchParams(window.location.search);
+const viewerId = urlParams.get('viewer');
+const isViewerMode = !!viewerId;
+window.viewerName = "";
+
+function getTargetId() {
+    return isViewerMode ? viewerId : (auth.currentUser ? auth.currentUser.uid : null);
+}
 
 function closeAllModals() {
     document.getElementById('species-modal').classList.add('hidden');
@@ -36,11 +45,9 @@ function getShortCountryName(countryName) {
         if (window.currentLang === 'pt' || window.currentLang === 'es') return "Brasil";
         return "Brazil";
     }
-    
     return countryName;
 }
 
-// Gerador de Imagem Placeholder Genérica em SVG
 function getDefaultPhoto(text) {
     const safeText = text || 'No Photo';
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
@@ -54,7 +61,7 @@ function getDefaultPhoto(text) {
 }
 
 // ==========================================
-// 2. LÓGICA DE IDIOMAS E TRANSLATIONS (I18N)
+// 2. LÓGICA DE IDIOMAS (I18N)
 // ==========================================
 window.currentLang = localStorage.getItem('birdwatch_lang') || 'en';
 
@@ -116,12 +123,11 @@ const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 // ==========================================
-// 4. MODAL DE BOAS-VINDAS E FECHAMENTO GLOBAL
+// 4. MÚSICA & MODAL DE BOAS-VINDAS
 // ==========================================
 if (!localStorage.getItem('birdwatch_welcome')) {
     document.getElementById('welcome-modal').classList.remove('hidden');
 }
-
 const closeWelcome = () => {
     localStorage.setItem('birdwatch_welcome', 'true');
     document.getElementById('welcome-modal').classList.add('hidden');
@@ -135,31 +141,16 @@ closeableModals.forEach(id => {
     if(modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                if (id === 'add-bird-modal') {
-                    resetAndCloseDataModal();
-                } else if (id === 'welcome-modal') {
-                    closeWelcome();
-                } else {
-                    modal.classList.add('hidden');
-                }
+                if (id === 'add-bird-modal') resetAndCloseDataModal();
+                else if (id === 'welcome-modal') closeWelcome();
+                else modal.classList.add('hidden');
             }
         });
     }
 });
 
-// ==========================================
-// 5. LÓGICA DA PLAYLIST DE MÚSICA & OTIMIZAÇÃO iOS
-// ==========================================
-const playlist = [
-    "music/ambient01.mp3", "music/ambient02.mp3", "music/ambient03.mp3",
-    "music/ambient04.mp3", "music/ambient05.mp3", "music/ambient06.mp3",
-    "music/ambient07.mp3", "music/ambient08.mp3", "music/ambient09.mp3",
-    "music/ambient10.mp3"
-];
-
-let currentTrackIndex = 0;
-let isMusicPlaying = false;
-let audioFadeInterval;
+const playlist = ["music/ambient01.mp3", "music/ambient02.mp3", "music/ambient03.mp3", "music/ambient04.mp3"];
+let currentTrackIndex = 0; let isMusicPlaying = false; let audioFadeInterval;
 const bgMusic = document.getElementById('bg-music');
 const toggleMusicBtn = document.getElementById('toggle-music-btn');
 const iconMusicOn = document.getElementById('icon-music-on');
@@ -168,146 +159,139 @@ const iconMusicOff = document.getElementById('icon-music-off');
 function fadeAudio(audio, direction, duration = 1200) {
     return new Promise(resolve => {
         clearInterval(audioFadeInterval);
-        
         if (L.Browser.mobile || L.Browser.safari || /iPad|iPhone|iPod/.test(navigator.userAgent)) {
-            if (direction === 'in') {
-                audio.play().then(resolve).catch(() => resolve());
-            } else {
-                audio.pause();
-                resolve();
-            }
+            if (direction === 'in') audio.play().then(resolve).catch(() => resolve());
+            else { audio.pause(); resolve(); }
             return;
         }
-
-        let step = 50 / duration; 
-        let virtualVol = direction === 'in' ? 0 : audio.volume;
-        
-        if (direction === 'in') {
-            audio.volume = 0;
-            audio.play().catch(() => resolve());
-        }
-        
+        let step = 50 / duration; let virtualVol = direction === 'in' ? 0 : audio.volume;
+        if (direction === 'in') { audio.volume = 0; audio.play().catch(() => resolve()); }
         audioFadeInterval = setInterval(() => {
             virtualVol = direction === 'in' ? virtualVol + step : virtualVol - step;
-            
             if ((direction === 'in' && virtualVol >= 1) || (direction === 'out' && virtualVol <= 0)) {
                 clearInterval(audioFadeInterval);
                 if (direction === 'out') audio.pause();
-                audio.volume = direction === 'in' ? 1 : 0;
-                resolve();
-            } else {
-                audio.volume = virtualVol;
-            }
+                audio.volume = direction === 'in' ? 1 : 0; resolve();
+            } else { audio.volume = virtualVol; }
         }, 50);
     });
 }
-
-function loadTrack(index) {
-    bgMusic.src = playlist[index];
-    bgMusic.load();
-}
-
-bgMusic.addEventListener('ended', () => {
-    currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-    loadTrack(currentTrackIndex);
-    fadeAudio(bgMusic, 'in'); 
-});
-
-const handleMusicToggle = async (e) => {
-    e.stopPropagation(); 
-    e.preventDefault();
+function loadTrack(index) { bgMusic.src = playlist[index]; bgMusic.load(); }
+bgMusic.addEventListener('ended', () => { currentTrackIndex = (currentTrackIndex + 1) % playlist.length; loadTrack(currentTrackIndex); fadeAudio(bgMusic, 'in'); });
+toggleMusicBtn.addEventListener('click', async (e) => {
+    e.stopPropagation(); e.preventDefault();
     if (!isMusicPlaying) {
-        iconMusicOff.classList.add('hidden');
-        iconMusicOn.classList.remove('hidden');
-        isMusicPlaying = true;
+        iconMusicOff.classList.add('hidden'); iconMusicOn.classList.remove('hidden'); isMusicPlaying = true;
         if (!bgMusic.src || bgMusic.src === window.location.href) loadTrack(currentTrackIndex);
         fadeAudio(bgMusic, 'in');
     } else {
-        iconMusicOn.classList.add('hidden');
-        iconMusicOff.classList.remove('hidden');
-        isMusicPlaying = false;
+        iconMusicOn.classList.add('hidden'); iconMusicOff.classList.remove('hidden'); isMusicPlaying = false;
         fadeAudio(bgMusic, 'out');
     }
-};
-
-toggleMusicBtn.addEventListener('click', handleMusicToggle);
-toggleMusicBtn.addEventListener('touchstart', (e) => { e.stopPropagation(); }, {passive: true});
-
+});
 const startMusicOnInteraction = () => {
     if (!isMusicPlaying) {
         if (!bgMusic.src || bgMusic.src === window.location.href) loadTrack(currentTrackIndex);
-        iconMusicOff.classList.add('hidden');
-        iconMusicOn.classList.remove('hidden');
-        isMusicPlaying = true;
-        fadeAudio(bgMusic, 'in').catch(err => console.log("Aguardando interação para tocar."));
+        iconMusicOff.classList.add('hidden'); iconMusicOn.classList.remove('hidden'); isMusicPlaying = true;
+        fadeAudio(bgMusic, 'in').catch(err => {});
     }
-    document.removeEventListener('click', startMusicOnInteraction);
-    document.removeEventListener('touchstart', startMusicOnInteraction);
+    document.removeEventListener('click', startMusicOnInteraction); document.removeEventListener('touchstart', startMusicOnInteraction);
 };
-
-document.addEventListener('click', startMusicOnInteraction);
-document.addEventListener('touchstart', startMusicOnInteraction);
-
-document.addEventListener("visibilitychange", () => {
-    if (L.Browser.mobile) {
-        if (document.hidden) {
-            bgMusic.pause();
-        } else {
-            if (isMusicPlaying) {
-                bgMusic.play().catch(err => console.log("Retomada bloqueada pelo navegador.", err));
-            }
-        }
-    }
-});
+document.addEventListener('click', startMusicOnInteraction); document.addEventListener('touchstart', startMusicOnInteraction);
 
 // ==========================================
-// 6. AUTENTICAÇÃO E LOGIN
+// 5. AUTENTICAÇÃO, VIEWER MODE E LOGIN
 // ==========================================
 const loginScreen = document.getElementById('login-screen');
 const pendingScreen = document.getElementById('pending-screen');
 const mainApp = document.getElementById('main-app');
 const contextMenu = document.getElementById('map-context-menu');
 
-document.getElementById('google-login-btn').addEventListener('click', () => {
-    signInWithPopup(auth, provider).catch(error => {
-        if (error.code === 'auth/unauthorized-domain') {
-            alert("Erro de Segurança: O Firebase bloqueia requisições do endereço numérico 127.0.0.1. Por favor, troque o '127.0.0.1' por 'localhost' na barra de endereços do seu navegador e tente logar novamente.");
-        } else {
-            alert("Erro no login: " + error.message);
-        }
-    });
-});
-
-document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-document.getElementById('logout-pending-btn').addEventListener('click', () => signOut(auth));
-
-document.getElementById('suggestions-btn').addEventListener('click', () => {
-    window.location.href = "mailto:paulo.renato.reche@gmail.com?subject=birdWatch%20Suggestions";
-});
-
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists() && userSnap.data().status === 'approved') {
-            loginScreen.classList.add('hidden'); pendingScreen.classList.add('hidden'); mainApp.classList.remove('hidden');
-            if (!map) iniciarMapa();
-        } else if (!userSnap.exists()) {
-            await setDoc(userRef, { name: user.displayName, email: user.email, status: 'pending' });
-            loginScreen.classList.add('hidden'); pendingScreen.classList.remove('hidden');
-        } else {
-            loginScreen.classList.add('hidden'); pendingScreen.classList.remove('hidden');
-        }
-    } else {
-        loginScreen.classList.remove('hidden'); pendingScreen.classList.add('hidden'); mainApp.classList.add('hidden');
-    }
-});
 document.getElementById('toggle-sidebar-btn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('collapsed'));
 
+if (isViewerMode) {
+    // Modo de Leitura/Visitante
+    loginScreen.classList.add('hidden');
+    pendingScreen.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+    
+    document.getElementById('owner-menu').classList.add('hidden');
+    document.getElementById('viewer-menu').classList.remove('hidden');
+
+    // Busca o nome do dono do mapa
+    const userRef = doc(db, "users", viewerId);
+    getDoc(userRef).then(userSnap => {
+        if (userSnap.exists()) {
+            const fullName = userSnap.data().name || "Explorer";
+            window.viewerName = fullName;
+            const firstName = fullName.split(' ')[0];
+            document.getElementById('viewer-name-title').innerText = `birdWatch de ${firstName}`;
+        }
+    }).catch(err => console.error(err));
+
+    iniciarMapa();
+} else {
+    // Fluxo Normal do Dono
+    document.getElementById('owner-menu').classList.remove('hidden');
+    document.getElementById('viewer-menu').classList.add('hidden');
+
+    document.getElementById('google-login-btn').addEventListener('click', () => {
+        signInWithPopup(auth, provider).catch(error => {
+            if (error.code === 'auth/unauthorized-domain') alert("Mude 127.0.0.1 para localhost na URL do navegador.");
+            else alert("Erro no login: " + error.message);
+        });
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+    document.getElementById('logout-pending-btn').addEventListener('click', () => signOut(auth));
+    document.getElementById('suggestions-btn').addEventListener('click', () => { window.location.href = "mailto:paulo.renato.reche@gmail.com?subject=birdWatch%20Suggestions"; });
+
+    // Link de Compartilhamento
+    document.getElementById('share-btn').addEventListener('click', () => {
+        if (auth.currentUser) {
+            const url = window.location.origin + window.location.pathname + '?viewer=' + auth.currentUser.uid;
+            navigator.clipboard.writeText(url).then(() => {
+                const msg = window.translations[window.currentLang].msg_link_copied || "Link copied!";
+                alert(msg);
+            });
+        }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists() && userSnap.data().status === 'approved') {
+                loginScreen.classList.add('hidden'); pendingScreen.classList.add('hidden'); mainApp.classList.remove('hidden');
+                if (!map) iniciarMapa();
+            } else if (!userSnap.exists()) {
+                await setDoc(userRef, { name: user.displayName, email: user.email, status: 'pending' });
+                loginScreen.classList.add('hidden'); pendingScreen.classList.remove('hidden');
+            } else {
+                loginScreen.classList.add('hidden'); pendingScreen.classList.remove('hidden');
+            }
+        } else {
+            loginScreen.classList.remove('hidden'); pendingScreen.classList.add('hidden'); mainApp.classList.add('hidden');
+        }
+    });
+}
+
+// Menus para ambas as visualizações
+document.getElementById('nav-species').addEventListener('click', () => { closeAllModals(); abrirModalEspecies(); });
+document.getElementById('nav-achievements').addEventListener('click', () => { closeAllModals(); abrirModalConquistas(); });
+document.getElementById('nav-profile').addEventListener('click', () => { closeAllModals(); abrirModalPerfil(); });
+document.getElementById('nav-about').addEventListener('click', () => { closeAllModals(); document.getElementById('welcome-modal').classList.remove('hidden'); });
+
+document.getElementById('nav-species-viewer').addEventListener('click', () => { closeAllModals(); abrirModalEspecies(); });
+document.getElementById('nav-achievements-viewer').addEventListener('click', () => { closeAllModals(); abrirModalConquistas(); });
+document.getElementById('nav-about-viewer').addEventListener('click', () => { closeAllModals(); document.getElementById('welcome-modal').classList.remove('hidden'); });
+document.getElementById('cta-create-btn').addEventListener('click', () => { window.location.href = window.location.origin + window.location.pathname; });
+
 // ==========================================
-// 7. MAPA E REGISTROS PRINCIPAIS
+// 6. MAPA E REGISTROS PRINCIPAIS
 // ==========================================
 function iniciarRegistro(lat, lng) {
+    if (isViewerMode) return;
     currentLat = lat; currentLng = lng;
     const t = window.translations ? window.translations[window.currentLang] : { modal_record_title: "Record a Discovery", loading_loc: "Loading location...", unknown_loc: "Unknown", unknown_country: "Unknown" };
     
@@ -341,11 +325,7 @@ function iniciarMapa() {
             const originalSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`;
             const loadingSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: cozy-spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
             btn.innerHTML = originalSVG; btn.title = 'Find my location';
-            
-            btn.onclick = (e) => {
-                e.stopPropagation(); btn.innerHTML = loadingSVG; 
-                map.locate({ setView: true, maxZoom: 14, enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
-            };
+            btn.onclick = (e) => { e.stopPropagation(); btn.innerHTML = loadingSVG; map.locate({ setView: true, maxZoom: 14, enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }); };
             map.on('locationfound', () => { btn.innerHTML = originalSVG; });
             map.on('locationerror', (err) => { btn.innerHTML = originalSVG; alert(window.translations[window.currentLang].gps_error || "Please check GPS."); });
             return btn;
@@ -369,45 +349,30 @@ function iniciarMapa() {
 
     let contextLat, contextLng;
     map.on('click', (e) => {
-        if (window.isPickingLocation) {
-            window.isPickingLocation = false;
-            iniciarRegistro(e.latlng.lat, e.latlng.lng);
-            return;
-        }
-        if (L.Browser.mobile) {
-            iniciarRegistro(e.latlng.lat, e.latlng.lng);
-        } else {
-            contextMenu.classList.add('hidden');
-        }
+        if (isViewerMode) return;
+        if (window.isPickingLocation) { window.isPickingLocation = false; iniciarRegistro(e.latlng.lat, e.latlng.lng); return; }
+        if (L.Browser.mobile) iniciarRegistro(e.latlng.lat, e.latlng.lng);
+        else contextMenu.classList.add('hidden');
     });
 
     if (!L.Browser.mobile) {
         map.on('contextmenu', (e) => {
-            if (window.isPickingLocation) return;
+            if (window.isPickingLocation || isViewerMode) return;
             contextLat = e.latlng.lat; contextLng = e.latlng.lng;
-            contextMenu.style.left = e.containerPoint.x + 'px';
-            contextMenu.style.top = e.containerPoint.y + 'px';
+            contextMenu.style.left = e.containerPoint.x + 'px'; contextMenu.style.top = e.containerPoint.y + 'px';
             contextMenu.classList.remove('hidden');
         });
         document.getElementById('add-record-btn').addEventListener('click', () => {
-            contextMenu.classList.add('hidden');
-            iniciarRegistro(contextLat, contextLng);
+            contextMenu.classList.add('hidden'); iniciarRegistro(contextLat, contextLng);
         });
     }
 
     document.getElementById('update-loc-btn').addEventListener('click', (e) => {
         e.preventDefault();
-        document.getElementById('add-bird-modal').classList.add('hidden');
-        window.isPickingLocation = true;
-        const msg = window.translations[window.currentLang].click_map_loc || "Click anywhere on the map to set a new location.";
-        alert(msg);
+        document.getElementById('add-bird-modal').classList.add('hidden'); window.isPickingLocation = true;
+        alert(window.translations[window.currentLang].click_map_loc || "Click anywhere on the map to set a new location.");
     });
 
-    document.getElementById('nav-species').addEventListener('click', () => { closeAllModals(); abrirModalEspecies(); });
-    document.getElementById('nav-achievements').addEventListener('click', () => { closeAllModals(); abrirModalConquistas(); });
-    document.getElementById('nav-profile').addEventListener('click', () => { closeAllModals(); abrirModalPerfil(); });
-    document.getElementById('nav-about').addEventListener('click', () => { closeAllModals(); document.getElementById('welcome-modal').classList.remove('hidden'); });
-    
     document.getElementById('close-modal-btn').addEventListener('click', resetAndCloseDataModal);
     document.getElementById('close-x-add').addEventListener('click', resetAndCloseDataModal);
     document.getElementById('cancel-crop-btn').addEventListener('click', () => document.getElementById('crop-modal').classList.add('hidden'));
@@ -422,25 +387,18 @@ function iniciarMapa() {
     document.getElementById('close-image-viewer').addEventListener('click', () => document.getElementById('image-viewer-modal').classList.add('hidden'));
 
     document.getElementById('bird-photo-input').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const t = window.translations ? window.translations[window.currentLang] : { err_large_file: "File too large!" };
-        if (file.size > 10 * 1024 * 1024) return alert(t.err_large_file);
-
+        const file = e.target.files[0]; if (!file) return;
+        if (file.size > 10 * 1024 * 1024) return alert(window.translations[window.currentLang].err_large_file);
         exifr.parse(file).then(exif => {
             if (exif && exif.DateTimeOriginal) {
                 const d = new Date(exif.DateTimeOriginal);
-                const year = d.getFullYear(); const month = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0');
-                document.getElementById('bird-date').value = `${year}-${month}-${day}`;
+                document.getElementById('bird-date').value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
             }
-        }).catch(() => console.log("No EXIF data found."));
-
+        }).catch(() => {});
         const reader = new FileReader();
         reader.onload = (event) => {
-            document.getElementById('image-to-crop').src = event.target.result;
-            document.getElementById('crop-modal').classList.remove('hidden');
-            if (cropper) cropper.destroy();
-            cropper = new Cropper(document.getElementById('image-to-crop'), { aspectRatio: 1, viewMode: 2 });
+            document.getElementById('image-to-crop').src = event.target.result; document.getElementById('crop-modal').classList.remove('hidden');
+            if (cropper) cropper.destroy(); cropper = new Cropper(document.getElementById('image-to-crop'), { aspectRatio: 1, viewMode: 2 });
         };
         reader.readAsDataURL(file);
     });
@@ -448,52 +406,35 @@ function iniciarMapa() {
     document.getElementById('confirm-crop-btn').addEventListener('click', () => {
         currentCroppedDataUrl = cropper.getCroppedCanvas({ width: 800, height: 800 }).toDataURL('image/jpeg', 0.8);
         document.getElementById('cropped-preview').src = currentCroppedDataUrl;
-        document.getElementById('cropped-preview-container').classList.remove('hidden');
-        document.getElementById('crop-modal').classList.add('hidden');
+        document.getElementById('cropped-preview-container').classList.remove('hidden'); document.getElementById('crop-modal').classList.add('hidden');
     });
 
     document.getElementById('save-bird-btn').addEventListener('click', async () => {
         const btn = document.getElementById('save-bird-btn');
-        const t = window.translations ? window.translations[window.currentLang] : { btn_saving: "Saving...", btn_save: "Save Discovery", err_saving: "Error saving." };
+        const t = window.translations ? window.translations[window.currentLang] : { btn_saving: "Saving...", btn_save: "Save", err_saving: "Error" };
         btn.innerText = t.btn_saving; btn.disabled = true;
 
         try {
             let photoUrl = "";
-            if (editingBirdId && !currentCroppedDataUrl) {
-                photoUrl = window.userBirdsData[editingBirdId].photoUrl || "";
-            } else if (currentCroppedDataUrl) {
+            if (editingBirdId && !currentCroppedDataUrl) photoUrl = window.userBirdsData[editingBirdId].photoUrl || "";
+            else if (currentCroppedDataUrl) {
                 const photoRef = ref(storage, `birds/${auth.currentUser.uid}_${Date.now()}.jpg`);
-                await uploadString(photoRef, currentCroppedDataUrl, 'data_url');
-                photoUrl = await getDownloadURL(photoRef);
+                await uploadString(photoRef, currentCroppedDataUrl, 'data_url'); photoUrl = await getDownloadURL(photoRef);
             }
 
             const birdData = {
-                userId: auth.currentUser.uid,
-                lat: currentLat, lng: currentLng,
-                location: document.getElementById('bird-location').value,
-                country: currentCountry || t.unknown_country,
-                state: currentState || "", 
-                date: document.getElementById('bird-date').value,
-                equipment: document.getElementById('bird-equip').value,
-                informalName: document.getElementById('bird-informal-name').value,
-                scientificName: document.getElementById('bird-scientific-name').value,
-                photoUrl: photoUrl,
-                timestamp: Date.now()
+                userId: auth.currentUser.uid, lat: currentLat, lng: currentLng,
+                location: document.getElementById('bird-location').value, country: currentCountry || t.unknown_country, state: currentState || "", 
+                date: document.getElementById('bird-date').value, equipment: document.getElementById('bird-equip').value,
+                informalName: document.getElementById('bird-informal-name').value, scientificName: document.getElementById('bird-scientific-name').value,
+                photoUrl: photoUrl, timestamp: Date.now()
             };
 
-            if (editingBirdId) {
-                await updateDoc(doc(db, "birds", editingBirdId), birdData);
-            } else {
-                await addDoc(collection(db, "birds"), birdData);
-            }
+            if (editingBirdId) await updateDoc(doc(db, "birds", editingBirdId), birdData);
+            else await addDoc(collection(db, "birds"), birdData);
 
-            resetAndCloseDataModal();
-            atualizarPinosNoMapa();
-        } catch (error) {
-            console.error(error); alert(t.err_saving);
-        } finally {
-            btn.innerText = t.btn_save; btn.disabled = false;
-        }
+            resetAndCloseDataModal(); atualizarPinosNoMapa();
+        } catch (error) { console.error(error); alert(t.err_saving); } finally { btn.innerText = t.btn_save; btn.disabled = false; }
     });
 
     document.getElementById('search-species').addEventListener('input', renderSpeciesList);
@@ -502,21 +443,14 @@ function iniciarMapa() {
 
 function resetAndCloseDataModal() {
     document.getElementById('add-bird-modal').classList.add('hidden');
-    document.getElementById('bird-photo-input').value = "";
-    document.getElementById('bird-location').value = "";
-    document.getElementById('bird-date').value = "";
-    document.getElementById('bird-equip').value = "";
-    document.getElementById('bird-informal-name').value = "";
-    document.getElementById('bird-scientific-name').value = "";
-    document.getElementById('cropped-preview-container').classList.add('hidden');
-    document.getElementById('update-loc-btn').style.display = 'none';
+    ['bird-photo-input','bird-location','bird-date','bird-equip','bird-informal-name','bird-scientific-name'].forEach(id => document.getElementById(id).value = "");
+    document.getElementById('cropped-preview-container').classList.add('hidden'); document.getElementById('update-loc-btn').style.display = 'none';
     currentCroppedDataUrl = null; editingBirdId = null; window.isPickingLocation = false;
     if(window.translations) document.getElementById('modal-title-bird').innerText = window.translations[window.currentLang].modal_record_title;
 }
 
 async function atualizarPinosNoMapa() {
-    if (!window.markerGroup) window.markerGroup = L.featureGroup().addTo(map);
-    else window.markerGroup.clearLayers();
+    if (!window.markerGroup) window.markerGroup = L.featureGroup().addTo(map); else window.markerGroup.clearLayers();
 
     const cozyPin = L.divIcon({
         className: 'clear-pin',
@@ -526,16 +460,13 @@ async function atualizarPinosNoMapa() {
 
     const t = window.translations ? window.translations[window.currentLang] : { default_bird: "Bird", no_photo: "No Photo" };
     const querySnapshot = await getDocs(collection(db, "birds"));
-    const equipSet = new Set();
-    const missingStateDocs = [];
+    const equipSet = new Set(); const missingStateDocs = [];
 
     querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        if (data.userId === auth.currentUser.uid) {
+        if (data.userId === getTargetId()) {
             if (data.equipment) equipSet.add(data.equipment);
-            
             const photoSrc = data.photoUrl ? data.photoUrl : getDefaultPhoto(t.no_photo);
-
             L.marker([data.lat, data.lng], {icon: cozyPin})
               .bindPopup(`<b>${data.informalName || t.default_bird}</b><br><img src="${photoSrc}" style="width:100px; border-radius:5px;">`)
               .addTo(window.markerGroup);
@@ -546,12 +477,12 @@ async function atualizarPinosNoMapa() {
     });
 
     const equipDatalist = document.getElementById('equip-list');
-    if(equipDatalist) {
+    if(equipDatalist && !isViewerMode) {
         equipDatalist.innerHTML = '';
         equipSet.forEach(equip => { const opt = document.createElement('option'); opt.value = equip; equipDatalist.appendChild(opt); });
     }
 
-    if (missingStateDocs.length > 0) {
+    if (!isViewerMode && missingStateDocs.length > 0) {
         setTimeout(async () => {
             for (const item of missingStateDocs) {
                 try {
@@ -568,17 +499,14 @@ async function atualizarPinosNoMapa() {
 async function abrirModalEspecies() {
     const list = document.getElementById('species-list');
     const t = window.translations ? window.translations[window.currentLang] : { loading: "Loading..." };
-    list.innerHTML = t.loading;
-    document.getElementById('species-modal').classList.remove('hidden');
+    list.innerHTML = t.loading; document.getElementById('species-modal').classList.remove('hidden');
 
     const querySnapshot = await getDocs(collection(db, "birds"));
-    window.userBirdsData = {};
-    const filterSelect = document.getElementById('filter-country');
-    const countriesSet = new Set();
+    window.userBirdsData = {}; const filterSelect = document.getElementById('filter-country'); const countriesSet = new Set();
 
     querySnapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.userId === auth.currentUser.uid) {
+        if (data.userId === getTargetId()) {
             window.userBirdsData[doc.id] = data;
             if(data.country) countriesSet.add(getShortCountryName(data.country));
         }
@@ -592,7 +520,7 @@ async function abrirModalEspecies() {
 
 function renderSpeciesList() {
     const list = document.getElementById('species-list');
-    const t = window.translations ? window.translations[window.currentLang] : { unknown_loc: "Unknown", btn_edit: "Edit", btn_delete: "Delete", btn_zoom: "Zoom to", no_species: "No species", confirm_delete: "Delete?", modal_edit_title: "Edit Discovery", no_photo: "No Photo" };
+    const t = window.translations ? window.translations[window.currentLang] : { unknown_loc: "Unknown", btn_edit: "Edit", btn_delete: "Delete", btn_zoom: "Zoom to", no_species: "No species" };
     
     list.innerHTML = "";
     const searchVal = document.getElementById('search-species').value.toLowerCase();
@@ -608,6 +536,15 @@ function renderSpeciesList() {
 
         const photoSrc = data.photoUrl ? data.photoUrl : getDefaultPhoto(t.no_photo);
 
+        let actionsHtml = '';
+        if (!isViewerMode) {
+            actionsHtml = `
+                <button class="card-action-btn edit-bird-btn" data-id="${id}">${t.btn_edit}</button>
+                <button class="card-action-btn delete-bird-btn" data-id="${id}">${t.btn_delete}</button>
+            `;
+        }
+        actionsHtml += `<button class="card-action-btn zoom-to-btn" data-lat="${data.lat}" data-lng="${data.lng}">${t.btn_zoom}</button>`;
+
         list.innerHTML += `
             <div class="species-card">
                 <img src="${photoSrc}" alt="Bird" class="species-img-enlarge">
@@ -615,90 +552,61 @@ function renderSpeciesList() {
                 <p><i>${data.scientificName || '-'}</i></p>
                 <p>📍 ${data.location}</p>
                 <p>📅 ${data.date}</p>
-                <div class="card-actions">
-                    <button class="card-action-btn edit-bird-btn" data-id="${id}">${t.btn_edit}</button>
-                    <button class="card-action-btn delete-bird-btn" data-id="${id}">${t.btn_delete}</button>
-                    <button class="card-action-btn zoom-to-btn" data-lat="${data.lat}" data-lng="${data.lng}">${t.btn_zoom}</button>
-                </div>
+                <div class="card-actions">${actionsHtml}</div>
             </div>
         `;
     });
 
     document.querySelectorAll('.zoom-to-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            closeAllModals();
-            const lat = e.target.getAttribute('data-lat');
-            const lng = e.target.getAttribute('data-lng');
-            map.flyTo([lat, lng], 14, { duration: 1.5 });
+            closeAllModals(); map.flyTo([e.target.getAttribute('data-lat'), e.target.getAttribute('data-lng')], 14, { duration: 1.5 });
         });
     });
 
     document.querySelectorAll('.species-img-enlarge').forEach(img => {
         img.addEventListener('click', (e) => {
-            document.getElementById('viewer-img').src = e.target.src;
-            document.getElementById('image-viewer-modal').classList.remove('hidden');
+            document.getElementById('viewer-img').src = e.target.src; document.getElementById('image-viewer-modal').classList.remove('hidden');
         });
     });
 
-    document.querySelectorAll('.delete-bird-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            if(confirm(t.confirm_delete)) {
-                const id = e.target.getAttribute('data-id');
-                await deleteDoc(doc(db, "birds", id));
-                delete window.userBirdsData[id];
-                renderSpeciesList();
-                atualizarPinosNoMapa();
-            }
+    if (!isViewerMode) {
+        document.querySelectorAll('.delete-bird-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                if(confirm(t.confirm_delete)) {
+                    const id = e.target.getAttribute('data-id'); await deleteDoc(doc(db, "birds", id));
+                    delete window.userBirdsData[id]; renderSpeciesList(); atualizarPinosNoMapa();
+                }
+            });
         });
-    });
 
-    document.querySelectorAll('.edit-bird-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = e.target.getAttribute('data-id');
-            const bird = window.userBirdsData[id];
-            
-            editingBirdId = id; currentLat = bird.lat; currentLng = bird.lng;
-            currentCountry = bird.country; currentState = bird.state || "";
-
-            document.getElementById('modal-title-bird').innerText = t.modal_edit_title;
-            document.getElementById('update-loc-btn').style.display = 'block';
-            
-            document.getElementById('bird-location').value = bird.location;
-            document.getElementById('bird-date').value = bird.date;
-            document.getElementById('bird-equip').value = bird.equipment || "";
-            document.getElementById('bird-informal-name').value = bird.informalName || "";
-            document.getElementById('bird-scientific-name').value = bird.scientificName || "";
-            
-            if(bird.photoUrl) {
-                document.getElementById('cropped-preview').src = bird.photoUrl;
-                document.getElementById('cropped-preview-container').classList.remove('hidden');
-            } else {
-                document.getElementById('cropped-preview-container').classList.add('hidden');
-            }
-
-            closeAllModals();
-            document.getElementById('add-bird-modal').classList.remove('hidden');
+        document.querySelectorAll('.edit-bird-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.getAttribute('data-id'); const bird = window.userBirdsData[id];
+                editingBirdId = id; currentLat = bird.lat; currentLng = bird.lng; currentCountry = bird.country; currentState = bird.state || "";
+                document.getElementById('modal-title-bird').innerText = t.modal_edit_title; document.getElementById('update-loc-btn').style.display = 'block';
+                document.getElementById('bird-location').value = bird.location; document.getElementById('bird-date').value = bird.date;
+                document.getElementById('bird-equip').value = bird.equipment || ""; document.getElementById('bird-informal-name').value = bird.informalName || "";
+                document.getElementById('bird-scientific-name').value = bird.scientificName || "";
+                if(bird.photoUrl) { document.getElementById('cropped-preview').src = bird.photoUrl; document.getElementById('cropped-preview-container').classList.remove('hidden'); }
+                else { document.getElementById('cropped-preview-container').classList.add('hidden'); }
+                closeAllModals(); document.getElementById('add-bird-modal').classList.remove('hidden');
+            });
         });
-    });
+    }
 }
 
 async function abrirModalConquistas() {
     const list = document.getElementById('achievements-list');
     const t = window.translations ? window.translations[window.currentLang] : { loading: "Loading...", no_achievements: "No achievements", completed: "Completed" };
     
-    list.innerHTML = t.loading;
-    document.getElementById('achievements-modal').classList.remove('hidden');
-
-    const querySnapshot = await getDocs(collection(db, "birds"));
-    const countryCounts = {};
+    list.innerHTML = t.loading; document.getElementById('achievements-modal').classList.remove('hidden');
+    const querySnapshot = await getDocs(collection(db, "birds")); const countryCounts = {};
     
     querySnapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.userId === auth.currentUser.uid && data.country) {
+        if (data.userId === getTargetId() && data.country) {
             let regionKey = getShortCountryName(data.country);
-            if (regionKey === 'Brasil' || regionKey === 'Brazil') {
-                regionKey = data.state ? `Brasil - ${data.state}` : `Brasil (Processando...)`;
-            }
+            if (regionKey === 'Brasil' || regionKey === 'Brazil') regionKey = data.state ? `Brasil - ${data.state}` : `Brasil (Processando...)`;
             countryCounts[regionKey] = (countryCounts[regionKey] || 0) + 1;
         }
     });
@@ -709,34 +617,12 @@ async function abrirModalConquistas() {
     const sortedAchievements = Object.entries(countryCounts).sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: 'base' }));
 
     for (const [country, count] of sortedAchievements) {
-        let target = 10;
-        let medal = "";
-        
-        if (count >= 50) {
-            target = count;
-            medal = "🥇";
-        } else if (count >= 20) {
-            target = 50;
-            medal = "🥈";
-        } else if (count >= 10) {
-            target = 20;
-            medal = "🥉";
-        }
-        
+        let target = 10; let medal = "";
+        if (count >= 50) { target = count; medal = "🥇"; } else if (count >= 20) { target = 50; medal = "🥈"; } else if (count >= 10) { target = 20; medal = "🥉"; }
         const percentage = count >= 50 ? 100 : (count / target) * 100;
         const status = count >= 50 ? `${medal} 100% ✅` : (medal ? `${medal} ${count}/${target}` : `${count}/${target}`);
         
-        list.innerHTML += `
-            <div class="achievement-card">
-                <div class="achievement-header">
-                    <span>📍 ${country}</span>
-                    <span>${status}</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${percentage}%;"></div>
-                </div>
-            </div>
-        `;
+        list.innerHTML += `<div class="achievement-card"><div class="achievement-header"><span>📍 ${country}</span><span>${status}</span></div><div class="progress-bar"><div class="progress-fill" style="width: ${percentage}%;"></div></div></div>`;
     }
 }
 
@@ -744,55 +630,41 @@ async function abrirModalPerfil() {
     document.getElementById('profile-modal').classList.remove('hidden');
     const t = window.translations ? window.translations[window.currentLang] : { chart_label: "Birds per Country" };
     
-    const user = auth.currentUser;
-    document.getElementById('profile-name').innerText = user.displayName || 'Explorer';
-    document.getElementById('profile-email').innerText = user.email || '';
+    if (isViewerMode) {
+        document.getElementById('profile-name').innerText = window.viewerName || 'Explorer';
+        document.getElementById('profile-email').innerText = ''; // Esconde email no modo público
+    } else {
+        const user = auth.currentUser;
+        document.getElementById('profile-name').innerText = user.displayName || 'Explorer';
+        document.getElementById('profile-email').innerText = user.email || '';
+    }
 
     const querySnapshot = await getDocs(collection(db, "birds"));
-    let totalBirds = 0;
-    const countryCounts = {};
+    let totalBirds = 0; const countryCounts = {};
     
     querySnapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.userId === user.uid) {
+        if (data.userId === getTargetId()) {
             totalBirds++;
             if (data.country) {
                 let regionKey = getShortCountryName(data.country);
-                if (regionKey === 'Brasil' || regionKey === 'Brazil') {
-                    regionKey = data.state ? `Brasil - ${data.state}` : `Brasil (Processando...)`;
-                }
+                if (regionKey === 'Brasil' || regionKey === 'Brazil') regionKey = data.state ? `Brasil - ${data.state}` : `Brasil (Processando...)`;
                 countryCounts[regionKey] = (countryCounts[regionKey] || 0) + 1;
             }
         }
     });
 
-    const totalCountries = Object.keys(countryCounts).length;
-    const conqueredCountries = Object.values(countryCounts).filter(count => count >= 10).length;
-
     document.getElementById('stat-total-birds').innerText = totalBirds;
-    document.getElementById('stat-total-countries').innerText = totalCountries;
-    document.getElementById('stat-conquered').innerText = conqueredCountries;
+    document.getElementById('stat-total-countries').innerText = Object.keys(countryCounts).length;
+    document.getElementById('stat-conquered').innerText = Object.values(countryCounts).filter(count => count >= 10).length;
 
     if (profileChartInstance) profileChartInstance.destroy();
 
     const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-    const labels = sortedCountries.map(item => item[0]);
-    const data = sortedCountries.map(item => item[1]);
-
     const ctx = document.getElementById('profileChart').getContext('2d');
     profileChartInstance = new Chart(ctx, {
         type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{ label: t.chart_label, data: data, backgroundColor: '#688a42', borderRadius: 6 }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1, color: '#5c4d42' } },
-                x: { ticks: { color: '#5c4d42', font: { family: 'Nunito' } } }
-            }
-        }
+        data: { labels: sortedCountries.map(item => item[0]), datasets: [{ label: t.chart_label, data: sortedCountries.map(item => item[1]), backgroundColor: '#688a42', borderRadius: 6 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#5c4d42' } }, x: { ticks: { color: '#5c4d42', font: { family: 'Nunito' } } } } }
     });
 }
