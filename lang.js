@@ -15,6 +15,8 @@ window.translations = {
         menu_profile: "My Profile",
         menu_about: "About it",
         menu_suggestions: "Suggestions",
+        menu_share: "Share My Journey",
+        menu_cta_create: "Create your own!",
         menu_logout: "Logout",
         footer_music: "Music by",
 
@@ -48,7 +50,7 @@ window.translations = {
         achievements_desc: "Register species in different regions to conquer achievements!",
         completed: "Completed",
 
-        modal_profile_title: "Your Explorer Stats",
+        modal_profile_title: "Explorer Stats",
         stat_total: "Total Birds",
         stat_countries: "Regions Explored",
         stat_conquered: "Conquered (10+)",
@@ -61,13 +63,14 @@ window.translations = {
         default_bird: "Bird",
         no_photo: "No Photo",
         no_species: "No species found yet. Start exploring!",
-        no_achievements: "No achievements yet. Add your first record!",
+        no_achievements: "No achievements yet.",
         confirm_delete: "Are you sure you want to delete this discovery?",
         err_large_file: "File is larger than 10MB!",
         err_saving: "Error saving data.",
         alert_blocked_audio: "Waiting for user interaction to play music.",
         gps_error: "Could not access GPS. Please check if your browser has Location permissions enabled in your device settings.",
-        click_map_loc: "Click anywhere on the map to set a new location."
+        click_map_loc: "Click anywhere on the map to set a new location.",
+        msg_link_copied: "Your sharing link has been copied!"
     },
     pt: {
         welcome_title: "Bem-vindo! 🐦‍⬛",
@@ -82,9 +85,11 @@ window.translations = {
         
         menu_species: "Álbum",
         menu_achievements: "Conquistas",
-        menu_profile: "Meu Perfil",
+        menu_profile: "Perfil",
         menu_about: "Sobre o projeto",
         menu_suggestions: "Sugestões",
+        menu_share: "Compartilhar Jornada",
+        menu_cta_create: "Crie o seu álbum!",
         menu_logout: "Sair",
         footer_music: "Música por",
 
@@ -114,11 +119,11 @@ window.translations = {
         filter_all: "Todos os países",
         search_placeholder: "Buscar por nome...",
         
-        modal_achievements_title: "Minhas Conquistas 🏆",
+        modal_achievements_title: "Conquistas 🏆",
         achievements_desc: "Registre espécies nas regiões para desbloquear conquistas!",
         completed: "Concluído",
 
-        modal_profile_title: "Suas Estatísticas",
+        modal_profile_title: "Estatísticas",
         stat_total: "Total de Aves",
         stat_countries: "Regiões Exploradas",
         stat_conquered: "Conquistados (10+)",
@@ -131,13 +136,14 @@ window.translations = {
         default_bird: "Ave",
         no_photo: "Sem Foto",
         no_species: "Nenhuma espécie encontrada ainda. Comece a explorar!",
-        no_achievements: "Nenhuma conquista ainda. Adicione seu primeiro registro!",
+        no_achievements: "Nenhuma conquista ainda.",
         confirm_delete: "Tem certeza de que deseja deletar esta descoberta?",
         err_large_file: "O arquivo é maior que 10MB!",
         err_saving: "Erro ao salvar os dados.",
         alert_blocked_audio: "Aguardando interação do usuário para tocar música.",
         gps_error: "Não foi possível acessar o GPS. Verifique nos Ajustes do celular se o seu navegador tem permissão de Localização.",
-        click_map_loc: "Clique em qualquer lugar do mapa para definir a nova localização."
+        click_map_loc: "Clique em qualquer lugar do mapa para definir a nova localização.",
+        msg_link_copied: "Seu link de compartilhamento foi copiado!"
     },
     es: {
         welcome_title: "¡Bienvenido! 🐦‍⬛",
@@ -152,9 +158,11 @@ window.translations = {
         
         menu_species: "Álbum",
         menu_achievements: "Logros",
-        menu_profile: "Mi Perfil",
+        menu_profile: "Perfil",
         menu_about: "Sobre el proyecto",
         menu_suggestions: "Sugerencias",
+        menu_share: "Compartir Viaje",
+        menu_cta_create: "¡Crea tu álbum!",
         menu_logout: "Cerrar sesión",
         footer_music: "Música de",
 
@@ -184,11 +192,11 @@ window.translations = {
         filter_all: "Todos los países",
         search_placeholder: "Buscar por nombre...",
         
-        modal_achievements_title: "Mis Logros 🏆",
+        modal_achievements_title: "Logros 🏆",
         achievements_desc: "¡Registra especies en las regiones para desbloquear logros!",
         completed: "Completado",
 
-        modal_profile_title: "Tus Estadísticas",
+        modal_profile_title: "Estadísticas",
         stat_total: "Total de Aves",
         stat_countries: "Regiones Exploradas",
         stat_conquered: "Conquistados (10+)",
@@ -201,12 +209,13 @@ window.translations = {
         default_bird: "Ave",
         no_photo: "Sin Foto",
         no_species: "Aún no hay especies. ¡Empieza a explorar!",
-        no_achievements: "Aún no hay logros. ¡Añade tu primer registro!",
+        no_achievements: "Aún no hay logros.",
         confirm_delete: "¿Estás seguro de que deseas eliminar este descubrimiento?",
         err_large_file: "¡El archivo es mayor de 10MB!",
         err_saving: "Error al guardar los datos.",
         alert_blocked_audio: "Esperando interacción del usuario para reproducir música.",
         gps_error: "No se pudo acceder al GPS. Verifique en la configuración de su dispositivo si su navegador tiene permisos de Ubicación.",
-        click_map_loc: "Haz clic en cualquier lugar del mapa para establecer una nueva ubicación."
+        click_map_loc: "Haz clic en cualquier lugar del mapa para establecer una nueva ubicación.",
+        msg_link_copied: "¡Tu enlace para compartir ha sido copiado!"
     }
 };
